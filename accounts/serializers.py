@@ -25,3 +25,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255)
+    class Meta:
+        model = MyUser
+        fields = ['email', 'password']
+
+    # def is_valid(self, raise_exception=False):
+    #     self._errors = []
+    #     return True
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ['email', 'name','is_active','is_admin']
+        read_only_fields = ['email', 'name','is_active','is_admin']
