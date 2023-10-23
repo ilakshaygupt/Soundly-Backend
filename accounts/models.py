@@ -42,14 +42,12 @@ class MyUser(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(max_length=255)
+    otp = models.CharField(max_length=4,blank=True,null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-
     objects = MyUserManager()
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name"]
-
     def __str__(self):
         return self.email
 

@@ -40,3 +40,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ['email', 'name','is_active','is_admin']
         read_only_fields = ['email', 'name','is_active','is_admin']
+
+class VerifyAccountSerializer(serializers.Serializer):
+    email=serializers.EmailField(max_length=255)
+    otp=serializers.CharField(max_length=4)
