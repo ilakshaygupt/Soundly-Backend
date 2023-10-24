@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework',
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig',
+     'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -134,7 +135,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -185,3 +186,7 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', default=True)
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', default=587))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+TWILIO_ACCOUNT_SID = 'AC5e4e160b985e40333ccf3027d1710db0'
+TWILIO_AUTH_TOKEN = 'd17eb0df18dae51f83a4c9384b3a8280'
+TWILIO_PHONE_NUMBER = '+19149085345'
