@@ -1,22 +1,22 @@
-from django.shortcuts import render
+import random
 
+from django.conf import settings
+from django.contrib.auth import authenticate
+from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 from rest_framework.response import Response
-from rest_framework.views import status
-from rest_framework.views import APIView
-from accounts.serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
-from django.contrib.auth import authenticate
-from accounts.renderers import UserRenderer
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
-from accounts.emails import send_otp_via_email
-from accounts.serializers import VerifyAccountSerializer
-from accounts.models import MyUser
+from rest_framework.views import APIView, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from twilio.rest import Client
-from django.conf import settings
-import random
+
+from accounts.emails import send_otp_via_email
+from accounts.models import MyUser
+from accounts.renderers import UserRenderer
+from accounts.serializers import (UserLoginSerializer, UserProfileSerializer,
+                                  UserRegistrationSerializer,
+                                  VerifyAccountSerializer)
 
 
 def generate_otp():

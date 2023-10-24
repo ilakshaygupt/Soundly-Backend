@@ -1,7 +1,11 @@
-from django.core.mail import send_mail
 import random
+
 from django.conf import settings
-from  .models import MyUser
+from django.core.mail import send_mail
+
+from .models import MyUser
+
+
 def send_otp_via_email(email):
     subject="your subject verification meial "
     otp = random.randint(1000,9999)

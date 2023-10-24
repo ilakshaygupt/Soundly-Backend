@@ -1,8 +1,9 @@
+# Create your models here.
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin, User)
 from django.db import models
 
-# Create your models here.
-from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager , PermissionsMixin
+
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, password=None,password2=None):
         """
@@ -26,7 +27,7 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             email,
             password=password,
-            name=name       
+            name=name
             )
         user.is_admin = True
         user.save(using=self._db)
