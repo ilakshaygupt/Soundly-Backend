@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-u%(%o*tw*7#+xngv#zx#r3z_r=o38n-dexr*fz97_wc(8d&kzg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'accounts.MyUser'
 # Application definition
@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'soundly.urls'
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/','https://soundly.onrender.com/']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/','https://https://soundly-4pie.onrender.com/']
 
 
 TEMPLATES = [
