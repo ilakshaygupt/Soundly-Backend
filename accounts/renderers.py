@@ -1,7 +1,5 @@
 import json
-
 from rest_framework import renderers
-
 
 class UserRenderer(renderers.JSONRenderer):
     charset = 'utf-8'
@@ -11,8 +9,13 @@ class UserRenderer(renderers.JSONRenderer):
 
         # Check if the response status code indicates an error
         if 400 <= renderer_context['response'].status_code < 600:
-            response = json.dumps({'errors': data})
+            first_key = list(data.keys())[0]
+            f=data[first_key]
+            response = json.dumps({'success': False, 'message': first_key +" "+ f[0] if isinstance(f,list) else first_key +" "+ f})
         else:
-            response = json.dumps({'data': data})
+            if 'data' not in data :
+                response = json.dumps({'success': True, 'message': data['message']})
+            else :
+                response = json.dumps({'success': True, 'message': data['message'],'data':data['data']})
 
         return response

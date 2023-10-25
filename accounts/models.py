@@ -5,50 +5,52 @@ from django.db import models
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, username, password=None,email=None,phone_number=None):
         """
-        Creates and saves a User with the given email, name and password.
+        Creates and saves a User with the given , username and password.
         """
-        if not email:
-            raise ValueError("Users must have an email address")
 
         user = self.model(
+            phone_number=phone_number,
             email=email,
-            name=name,
+
+            username=username,
             )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, password=None):
+    def create_superuser(self,  username, password=None):
         """
-        Creates and saves a superuser with the given email, name and password.
+        Creates and saves a superuser with the given  username and password.
         """
         user = self.create_user(
-            email,
             password=password,
-            name=name
+            username=username
             )
         user.is_admin = True
         user.save(using=self._db)
         return user
 
 
-class MyUser(AbstractBaseUser):
+class MyUser(AbstractBaseUser,PermissionsMixin):
+    username = models.CharField(max_length=255,primary_key=True)
     email = models.EmailField(
-        verbose_name="email or phone number",
         max_length=255,
         unique=True,
+        blank=True,
+        null=True
     )
-    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=10,blank=True,null=True,unique=True)
     otp = models.CharField(max_length=4,blank=True,null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_artist = models.BooleanField(default=False)
     objects = MyUserManager()
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["name"]
+    USERNAME_FIELD = "username"
+
     def __str__(self):
-        return self.email
+        return self.username
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
