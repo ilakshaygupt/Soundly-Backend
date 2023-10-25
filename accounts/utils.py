@@ -9,7 +9,7 @@ import requests
 import os
 
 def send_otp_via_email(email):
-    subject="your subject verification meial "
+    subject="your subject verification email "
     otp = random.randint(1000,9999)
     message= f"your otp is {otp}"
     email_from = settings.EMAIL_HOST_USER

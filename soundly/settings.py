@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'soundly.urls'
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/','https://https://soundly-4pie.onrender.com/']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/','https://soundly-4pie.onrender.com/']
 
 
 TEMPLATES = [
@@ -166,3 +166,8 @@ STORAGES = {
     },
 }
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+CORS_ALLOWED_ORIGINS = [
+    "https://soundly-4pie.onrender.com",
+    "http://127.0.0.1:8000",
+]
