@@ -48,7 +48,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['email', 'name','is_artist']
+        fields = '__all__'
 
 class VerifyAccountSerializer(serializers.Serializer):
     username=serializers.CharField(max_length=255)

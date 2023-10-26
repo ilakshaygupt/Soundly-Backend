@@ -90,9 +90,8 @@ class UserProfileView(APIView):
 
     def get(self, request, format=None):
         user = request.user
-        print(user)
+
         serializer = UserProfileSerializer(user)
-        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class VerifyOtpView(APIView):
