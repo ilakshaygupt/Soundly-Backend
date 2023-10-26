@@ -64,7 +64,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'soundly.urls'
 # CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/','https://soundly-4pie.onrender.com/']
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
