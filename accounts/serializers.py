@@ -22,6 +22,8 @@ class UserRegistrationEmailSerializer(serializers.ModelSerializer):
         )
         return user
 
+
+
 class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=10,min_length=10)
 

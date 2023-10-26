@@ -66,6 +66,5 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-class ActiveToken(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    token = models.CharField(max_length=100)
+class OTP(models.Model):
+    username=models.CharField(max_length=255)
