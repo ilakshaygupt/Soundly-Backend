@@ -13,7 +13,6 @@ class MyUserManager(BaseUserManager):
         user = self.model(
             phone_number=phone_number,
             email=email,
-
             username=username,
             )
         user.set_password(password)
@@ -67,3 +66,6 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+class ActiveToken(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)

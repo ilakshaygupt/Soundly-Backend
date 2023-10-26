@@ -11,5 +11,5 @@ urlpatterns = [
     path('register/phone', UserRegistrationPhoneView.as_view(), name="register"),
     path('login/', UserLoginView.as_view(), name="login"),
     path('profile/', UserProfileView.as_view(), name="profile"),
-    path('verify/', VerifyOtpView.as_view(), name='verify')
+    path('verify/', VerifyOtpView.as_view(), name='verify'),
 ]

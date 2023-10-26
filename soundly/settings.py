@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'accounts.apps.AccountsConfig',
-     'drf_yasg'
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -167,7 +168,7 @@ STORAGES = {
 }
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOWED_ORIGINS = [
-    "https://soundly-4pie.onrender.com",
-    "http://127.0.0.1:8000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://soundly-4pie.onrender.com",
+#     "http://127.0.0.1:8000",
+# ]

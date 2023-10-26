@@ -75,8 +75,8 @@ class UserLoginView(APIView):
                     user.save()
                 else:
                     send_otp_via_email(user.email)
-
-
+                phone_number = user.phone_number
+                email = user.email
                 return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
             else:
                 return Response({"errors": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
