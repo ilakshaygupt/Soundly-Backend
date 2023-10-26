@@ -22,6 +22,7 @@ def send_otp_via_email(email):
 api_key=os.getenv("API_KEY")
 
 def send_otp_via_sms(phone_number,otp):
+    print(api_key)
     requests.get(f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{otp}/")
 
 def generate_otp():

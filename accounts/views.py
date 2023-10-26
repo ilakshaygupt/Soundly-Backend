@@ -43,6 +43,7 @@ class UserRegistrationPhoneView(APIView):
             phone_number = serializer.validated_data.get('phone_number')
             user = MyUser.objects.filter(username=username).first()
             if user:
+                print(user)
                 return Response({"errors": "User with this username already exists"}, status=status.HTTP_400_BAD_REQUEST)
             if MyUser.objects.filter(phone_number=phone_number).exists():
                 return Response({"errors": "User with this phone number already exists"}, status=status.HTTP_400_BAD_REQUEST)
@@ -69,6 +70,7 @@ class UserLoginView(APIView):
                 if user.phone_number:
                     otp = generate_otp()
                     send_otp_via_sms(user.phone_number, otp)
+
                     user.otp = otp
                     user.save()
                 else:
