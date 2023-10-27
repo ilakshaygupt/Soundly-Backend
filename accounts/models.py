@@ -2,6 +2,7 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
 from django.db import models
+from django.utils import timezone
 
 
 class MyUserManager(BaseUserManager):
@@ -66,5 +67,3 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-class OTP(models.Model):
-    username=models.CharField(max_length=255)
