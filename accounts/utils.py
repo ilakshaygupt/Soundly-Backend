@@ -5,6 +5,9 @@ from django.core.mail import send_mail
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import MyUser
+from rest_framework.exceptions import APIException
+from rest_framework import status
+
 import requests
 import os
 
@@ -29,9 +32,8 @@ def generate_otp():
     otp = random.randint(1000,9999)
     return otp
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
+
+class CustomError(APIException):
+    def __init__(self, error, code = status.HTTP_400_BAD_REQUEST):
+        self.status_code = code
+        self.detail = {'message' : [error]}

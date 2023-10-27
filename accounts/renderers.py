@@ -11,7 +11,8 @@ class UserRenderer(renderers.JSONRenderer):
         if 400 <= renderer_context['response'].status_code < 600:
             first_key = list(data.keys())[0]
             f=data[first_key]
-            response = json.dumps({'success': False, 'message': first_key +" "+ f[0] if isinstance(f,list) else first_key +" "+ f})
+            response = json.dumps({'success': False, 'message':  f[0] if isinstance(f,list) else  f})
+
         else:
             if 'data' not in data :
                 response = json.dumps({'success': True, 'message': data['message']})
