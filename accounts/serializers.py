@@ -50,7 +50,17 @@ class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
         )
         return user
 
+class ForgotEmailSerializer(serializers.ModelSerializer):
+    email=serializers.EmailField(max_length=255)
+    class Meta:
+        model = MyUser
+        fields = ['email']
 
+class ForgotPhoneSerializer(serializers.ModelSerializer):
+    phone_number=serializers.CharField(max_length=10)
+    class Meta:
+        model = MyUser
+        fields = ['phone_number']
 class UserLoginSerializer(serializers.ModelSerializer):
     username=serializers.CharField(max_length=255)
     class Meta:
@@ -72,4 +82,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class VerifyAccountSerializer(serializers.Serializer):
     username=serializers.CharField(max_length=255)
-    otp = serializers.CharField(max_length=4)

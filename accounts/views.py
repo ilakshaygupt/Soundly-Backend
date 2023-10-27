@@ -10,9 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from accounts.models import MyUser
 from accounts.renderers import UserRenderer
-from accounts.serializers import (UserLoginSerializer, UserProfileSerializer,
-                                  UserRegistrationEmailSerializer,UserRegistrationPhoneSerializer,
-                                  VerifyAccountSerializer)
+from accounts.serializers import *
 from accounts.utils import *
 
 
@@ -57,6 +55,36 @@ class UserRegistrationPhoneView(APIView):
             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 from django.core.exceptions import ValidationError
+class ForgotEmail(APIView):
+    renderer_classes=[UserRenderer]
+    def post(self, request, format=None):
+        serializer = ForgotEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get('email')
+            user = MyUser.objects.filter(email=email).first()
+            if not user:
+                return Response({"errors": "User with this email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            otp = generate_otp()
+
+            return Response({"message": "OTP sent to registered Email"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ForgotPhone(APIView):
+    renderer_classes=[UserRenderer]
+    def post(self, request, format=None):
+        serializer = ForgotPhoneSerializer(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data.get('phone_number')
+            user = MyUser.objects.filter(phone_number=phone_number).first()
+            if not user:
+                return Response({"errors": "User with this phone number does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            otp = generate_otp()
+            send_otp_via_sms(phone_number, otp)
+            user.otp = otp
+            user.save()
+            return Response({"message": "OTP sent to registered Phone Number"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserLoginView(APIView):
     renderer_classes=[UserRenderer]
@@ -74,7 +102,6 @@ class UserLoginView(APIView):
                 if user.phone_number:
                     otp = generate_otp()
                     send_otp_via_sms(user.phone_number, otp)
-
                     user.otp = otp
                     user.save()
                 else:
@@ -108,7 +135,6 @@ class VerifyOtpView(APIView):
             print(username)
             otp = serializer.validated_data.get('otp')
             user = MyUser.objects.filter(username=username)
-            print(user)
             if not user.exists():
                 return Response({
                         "message": "User does not exist"
