@@ -17,8 +17,10 @@ from accounts.utils import *
 
 
 class UserRegistrationEmailView(APIView):
-    renderer_classes = (UserRenderer,)
+    renderer_classes=[UserRenderer]
+
     def post(self, request, format=None):
+
         serializer = UserRegistrationEmailSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data.get('username')
@@ -35,7 +37,7 @@ class UserRegistrationEmailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserRegistrationPhoneView(APIView):
-    renderer_classes = (UserRenderer,)
+    renderer_classes=[UserRenderer]
     def post(self, request, format=None):
         serializer = UserRegistrationPhoneSerializer(data=request.data)
         if serializer.is_valid():
@@ -54,9 +56,11 @@ class UserRegistrationPhoneView(APIView):
             user.save()
             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from django.core.exceptions import ValidationError
 
 class UserLoginView(APIView):
-    renderer_classes = (UserRenderer,)
+    renderer_classes=[UserRenderer]
+
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         # print(serializer)
@@ -78,8 +82,9 @@ class UserLoginView(APIView):
                 phone_number = user.phone_number
                 email = user.email
                 return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
+
             else:
-                return Response({"errors": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +100,7 @@ class UserProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class VerifyOtpView(APIView):
-    renderer_classes = (UserRenderer,)
+    renderer_classes=[UserRenderer]
     def post(self, request, format=None):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
@@ -106,12 +111,12 @@ class VerifyOtpView(APIView):
             print(user)
             if not user.exists():
                 return Response({
-                        "error": "User does not exist"
+                        "message": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
             if not user.otp == otp:
                 return Response({
-                        "error": "Invalid otp"
+                        "message": "Invalid otp"
                 }, status=status.HTTP_400_BAD_REQUEST)
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
