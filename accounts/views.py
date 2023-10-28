@@ -123,22 +123,22 @@ class UserProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class VerifyOtpView(APIView):
-    renderer_classes=[UserRenderer]
+    renderer_classes = (UserRenderer,)
     def post(self, request, format=None):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
             username=serializer.validated_data.get('username')
-            print(username)
             otp = serializer.validated_data.get('otp')
             user = MyUser.objects.filter(username=username)
+            print(user)
             if not user.exists():
                 return Response({
-                        "message": "User does not exist"
+                        "error": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
             if not user.otp == otp:
                 return Response({
-                        "message": "Invalid otp"
+                        "error": "Invalid otp"
                 }, status=status.HTTP_400_BAD_REQUEST)
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)

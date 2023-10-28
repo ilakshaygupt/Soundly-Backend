@@ -74,3 +74,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class VerifyAccountSerializer(serializers.Serializer):
     username=serializers.CharField(max_length=255)
+    otp = serializers.CharField(max_length=4)
