@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import MyUser ,OTPmodel
+from .models import MyUser
 from rest_framework.exceptions import APIException
 from rest_framework import status
 
