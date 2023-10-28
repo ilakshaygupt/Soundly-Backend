@@ -87,8 +87,7 @@ class ForgotPhone(APIView):
 
 
 class UserLoginView(APIView):
-    renderer_classes=[UserRenderer]
-
+    renderer_classes = (UserRenderer,)
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         # print(serializer)
@@ -108,9 +107,7 @@ class UserLoginView(APIView):
                 email = user.email
                 return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
             else:
-                return Response({"message": "User with this username does not exist"}, status=status.HTTP_200_OK)
-
-
+                return Response({"errors": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
