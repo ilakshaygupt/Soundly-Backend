@@ -94,8 +94,6 @@ class UserLoginView(APIView):
         # print(serializer)
         if serializer.is_valid():
             username = serializer.validated_data.get('username')
-
-
             # Check if a user with the provided username exists
             user = MyUser.objects.filter(username=username).first()
             if user :
@@ -109,10 +107,6 @@ class UserLoginView(APIView):
                 phone_number = user.phone_number
                 email = user.email
                 return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
-
-            else:
-                return Response({"message": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
