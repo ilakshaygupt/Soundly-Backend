@@ -107,6 +107,11 @@ class UserLoginView(APIView):
                 phone_number = user.phone_number
                 email = user.email
                 return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "User with this username does not exist"}, status=status.HTTP_200_OK)
+
+
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
