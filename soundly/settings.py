@@ -168,7 +168,6 @@ STORAGES = {
 }
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://soundly-4pie.onrender.com",
-#     "http://127.0.0.1:8000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "*"
+]
