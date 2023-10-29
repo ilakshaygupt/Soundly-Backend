@@ -63,9 +63,8 @@ MIDDLEWARE = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'soundly.urls'
-CSRF_TRUSTED_ORIGINS = ['*']
+# CSRF_TRUSTED_ORIGINS = ['https://test-mkcw.onrender.com']
 CORS_ALLOW_ALL_ORIGINS = True
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -168,6 +167,6 @@ STORAGES = {
 }
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOWED_ORIGINS = [
-    "*"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "*"
+# ]
