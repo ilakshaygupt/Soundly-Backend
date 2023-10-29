@@ -137,7 +137,6 @@ class UserLoginView(APIView):
             try:
                 use = MyUser.objects.filter(username=username).first()
                 user=MyUser.objects.get(username=username)
-
                 if user and user.is_valid:
                     if user.phone_number:
                         otp = generate_otp()

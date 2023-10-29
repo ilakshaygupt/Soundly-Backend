@@ -61,9 +61,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'soundly.urls'
-# CSRF_TRUSTED_ORIGINS = ['https://test-mkcw.onrender.com']
 CORS_ALLOW_ALL_ORIGINS = True
 TEMPLATES = [
     {
@@ -166,7 +165,3 @@ STORAGES = {
     },
 }
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# CORS_ALLOWED_ORIGINS = [
-#     "*"
-# ]
