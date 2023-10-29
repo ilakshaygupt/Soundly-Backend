@@ -1,15 +1,16 @@
+import os
 import random
 
+import requests
 from django.conf import settings
 from django.core.mail import send_mail
+from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import MyUser
-from rest_framework.exceptions import APIException
-from rest_framework import status
 
-import requests
-import os
+from .models import MyUser
+
 
 def send_otp_via_email(email):
     subject="your subject verification email "

@@ -46,6 +46,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_artist = models.BooleanField(default=False)
+    is_valid=models.BooleanField(default=False,null=True,blank=True)
     objects = MyUserManager()
     USERNAME_FIELD = "username"
 

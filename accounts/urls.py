@@ -1,17 +1,17 @@
 
-from django.contrib import admin
 from django.urls import path
-from django.urls.conf import include
 
-from accounts.views import (UserLoginView, UserProfileView,
-                            UserRegistrationPhoneView,UserRegistrationEmailView, VerifyOtpView,ForgotEmail,ForgotPhone)
+
+from accounts.views import (ForgotEmail, ForgotPhone, UserLoginView,
+                             UserRegistrationEmailView,
+                            UserRegistrationPhoneView,
+                             VerifyOtpView)
 
 urlpatterns = [
     path('register/email/', UserRegistrationEmailView.as_view(), name="register"),
     path('register/phone/', UserRegistrationPhoneView.as_view(), name="register"),
-    path('login/', UserLoginView.as_view(), name="login"),
-    path('profile/', UserProfileView.as_view(), name="profile"),
     path('verify/', VerifyOtpView.as_view(), name='verify'),
+    path('login/', UserLoginView.as_view(), name="login"),
     path('forgot-email/', ForgotEmail.as_view(), name='forgot-email'),
     path('forgot-phone_number/', ForgotPhone.as_view(), name='forgot-phone_number'),
 ]
