@@ -205,7 +205,7 @@ class PlaylistAPI(APIView):
             #     thumbnail_url = thumbnail_response.get('url')
             #     playlist.thumbnail = thumbnail_url
 
-            serializer.save( artist=request.user)
+            serializer.save()
             return Response({
                 'message': 'Playlist partially updated'
             })
@@ -232,7 +232,7 @@ class PlaylistSongAPI(APIView):#display all songs from a playlist
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
 
         songs = playlist.songs.all()
-        serializer = SongSerializer(songs, many=True)
+        serializer = SongSerializer2(songs, many=True)
 
         return Response({"data":serializer.data,"message":"all songs displayed"}, status=status.HTTP_200_OK)
 
@@ -268,3 +268,6 @@ class AddSongToPlaylistAPI(APIView):
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         playlist.songs.remove(song)
         return Response({'message': 'Song removed from the playlist'}, status=status.HTTP_204_NO_CONTENT)
+
+
+#Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNzAwMzkyLCJpYXQiOjE2OTkxMDgzOTIsImp0aSI6ImIwNjE3MTJlY2MwNDQ0YmFiMDhmMjYzOGQ0MmQ3ZDVjIiwidXNlcl9pZCI6ImFkbWluIn0.S6YcBuB-BaIsMchGyLIqnWe8pkO_4Zp0v-ZwcrP1Ca4
