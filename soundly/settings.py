@@ -173,11 +173,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUD_NAME = os.getenv('CLOUD_NAME')
-API_KEY_CLOUD = os.getenv('API_KEY')
-SECRET_KEY = os.getenv('SECRET_KEY')
+API_KEY_CLOUD = os.getenv('API_KEY_CLOUD')
+SECRET = os.getenv('SECRET')
 
 cloudinary.config(
   cloud_name = CLOUD_NAME,
   api_key = API_KEY_CLOUD,
-  api_secret = SECRET_KEY
+  api_secret = SECRET
 )
