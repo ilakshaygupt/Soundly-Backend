@@ -253,6 +253,8 @@ class AddSongToPlaylistAPI(APIView):
             song = Song.objects.get(id=song_pk)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
+        if playlist.artist != request.user:
+            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         playlist.songs.add(song)
         return Response({'message': 'Song added successfully to the playlist'}, status=status.HTTP_201_CREATED)
 
