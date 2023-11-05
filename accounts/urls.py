@@ -2,10 +2,7 @@
 from django.urls import path
 
 
-from accounts.views import (ForgotEmail, ForgotPhone, UserLoginView,
-                             UserRegistrationEmailView,
-                            UserRegistrationPhoneView,
-                             VerifyOtpView)
+from accounts.views import *
 
 urlpatterns = [
     path('register/email/', UserRegistrationEmailView.as_view(), name="register"),
@@ -14,4 +11,5 @@ urlpatterns = [
     path('login/', UserLoginView.as_view(), name="login"),
     path('forgot-email/', ForgotEmail.as_view(), name='forgot-email'),
     path('forgot-phone_number/', ForgotPhone.as_view(), name='forgot-phone_number'),
+    path('profile/',UserProfie.as_view(),name='profile')
 ]

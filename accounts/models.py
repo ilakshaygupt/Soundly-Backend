@@ -2,7 +2,7 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
 from django.db import models
-from django.utils import timezone
+
 
 
 class MyUserManager(BaseUserManager):
@@ -47,6 +47,10 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_artist = models.BooleanField(default=False)
     is_valid=models.BooleanField(default=False,null=True,blank=True)
+    # fav_artists=models.ManyToManyField('self',blank=True,null=True)
+    # fav_languages=models.ManyToManyField(Language,blank=True,null=True)
+    # fav_playlist=models.ManyToManyField(Playlist,blank=True,null=True)
+    # fav_songs=models.ManyToManyField(Song,blank=True,null=True)
     objects = MyUserManager()
     USERNAME_FIELD = "username"
 

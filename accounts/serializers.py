@@ -108,3 +108,7 @@ class VerifyForgotPhoneSerializer(serializers.Serializer):
                                 'min_length': 'otp should be 4 digits',
                                 'max_length': 'otp should be 4 digits'
                                 })
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=MyUser
+        fields=['username','email','phone_number']
