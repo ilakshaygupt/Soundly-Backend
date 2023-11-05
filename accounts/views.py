@@ -187,3 +187,15 @@ class VerifyOtpView(APIView):
                     "refresh_token": refresh_token}
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfie(APIView):
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+    renderer_classes = (UserRenderer,)
+    def get(self,request):
+        user=request.user
+        print(request)
+        serializer=UserProfileSerializer(user)
+        return Response({'message': 'User Data send',"data" :serializer.data},status=status.HTTP_200_OK)
+
+    #Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
