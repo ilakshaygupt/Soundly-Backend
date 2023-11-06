@@ -169,8 +169,6 @@ class PlaylistAPI(APIView):
             except Playlist.DoesNotExist:
                 return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            if playlist.artist != request.user:
-                return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
             try:
                 playlists = Playlist.objects.filter(artist=request.user)
             except Playlist.DoesNotExist:
