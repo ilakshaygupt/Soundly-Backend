@@ -7,5 +7,8 @@ urlpatterns = [
     path('api/playlists/', views.PlaylistAPI.as_view(), name='playlist-view'),
     path('api/playlists/<int:pk>/', views.PlaylistAPI.as_view(), name='playlist-view'),
     path('api/playlists/<int:pk>/songs/', views.PlaylistSongAPI.as_view(), name='playlist-song-view'),#display all songs in a playlist
-    path('api/playlists/<int:pk>/songs/<int:song_pk>/', views.AddSongToPlaylistAPI.as_view(), name='playlist-song-view'),#add a song to a playlist
+    path('api/playlists/<int:pk>/songs/<int:song_pk>/', views.AddSongToPlaylistAPI.as_view(), name='playlist-song-view'),#add remove a song to a playlist
+    path('api/allpublicsongs/', views.AllPublicSongsAPI.as_view(), name='all-public-songs-view'),
+    path('api/allpublicplaylists/', views.AllPublicPlaylistsAPI.as_view(), name='all-public-playlists-view'),
+    path('api/allpublicplaylists/<int:pk>/', views.PublicSongsFromPlaylistAPI.as_view(), name='public-songs-from-playlist-view'),
 ]

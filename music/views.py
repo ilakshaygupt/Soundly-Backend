@@ -185,12 +185,6 @@ class PlaylistAPI(APIView):
 
         serializer = PlaylistSerializer(playlist, data=request.data)
         if serializer.is_valid():
-
-            # if 'thumbnail' in request.FILES:
-            #     thumbnail = request.FILES['thumbnail']
-            #     thumbnail_response = cloudinary.uploader.upload(thumbnail, secure=True)
-            #     thumbnail_url = thumbnail_response.get('url')
-            #     playlist.thumbnail = thumbnail_url
             if playlist.artist != request.user:
                 return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
             serializer.save(artist=request.user)
@@ -229,7 +223,6 @@ class PlaylistAPI(APIView):
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.artist != request.user:
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
-
         playlist.delete()
         return Response({'message': 'Playlist deleted'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -289,4 +282,43 @@ class AddSongToPlaylistAPI(APIView):
         return Response({'message': 'Song removed from the playlist'}, status=status.HTTP_204_NO_CONTENT)
 
 
-#Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNzAwMzkyLCJpYXQiOjE2OTkxMDgzOTIsImp0aSI6ImIwNjE3MTJlY2MwNDQ0YmFiMDhmMjYzOGQ0MmQ3ZDVjIiwidXNlcl9pZCI6ImFkbWluIn0.S6YcBuB-BaIsMchGyLIqnWe8pkO_4Zp0v-ZwcrP1Ca4
+
+
+class AllPublicSongsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        songs = Song.objects.filter(is_private=False)
+        serializer = SongSerializer2(songs, many=True)
+        return Response({"data":serializer.data,"message":"all public songs displayed"}, status=status.HTTP_200_OK)
+
+class AllPublicPlaylistsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        playlists = Playlist.objects.filter(is_private=False)
+        serializer = PlaylistSerializer(playlists, many=True)
+        return Response({"data":serializer.data,"message":"all public playlists displayed"}, status=status.HTTP_200_OK)
+
+
+class PublicSongsFromPlaylistAPI(APIView):
+    renderer_classes = [UserRenderer]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, format=None):
+        try:
+            playlist = Playlist.objects.get(pk=pk)
+        except Playlist.DoesNotExist:
+            return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
+        if playlist.is_private:
+            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        songs = playlist.songs.filter(is_private=False)
+        serializer = SongSerializer2(songs, many=True)
+
+        return Response({"data":serializer.data,"message":"all public songs from playlist displayed"}, status=status.HTTP_200_OK)

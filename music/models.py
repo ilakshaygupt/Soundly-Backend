@@ -30,6 +30,7 @@ class Song(models.Model):
     mood = models.ForeignKey(Mood, on_delete=models.SET_NULL, blank=True, null=True)
     song_url = models.URLField(blank=True,null=True,default=None)
     thumbnail_url = models.URLField(blank=True,null=True,default=None)
+    is_private = models.BooleanField(default=False)
 
 
     def __str__(self):
