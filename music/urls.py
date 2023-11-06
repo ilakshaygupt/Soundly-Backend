@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/allpublicsongs/', views.AllPublicSongsAPI.as_view(), name='all-public-songs-view'),
     path('api/allpublicplaylists/', views.AllPublicPlaylistsAPI.as_view(), name='all-public-playlists-view'),
     path('api/allpublicplaylists/<int:pk>/', views.PublicSongsFromPlaylistAPI.as_view(), name='public-songs-from-playlist-view'),
+    path("api/songsearch/",views.SongSearchAPI.as_view(),name="song-search-view"),
 ]

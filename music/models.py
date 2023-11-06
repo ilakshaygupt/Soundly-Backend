@@ -31,8 +31,6 @@ class Song(models.Model):
     song_url = models.URLField(blank=True,null=True,default=None)
     thumbnail_url = models.URLField(blank=True,null=True,default=None)
     is_private = models.BooleanField(default=False)
-
-
     def __str__(self):
         return self.name
 

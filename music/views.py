@@ -8,6 +8,7 @@ from accounts.renderers import *
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import Q
 
 
 class SongAPI(APIView):
@@ -322,3 +323,30 @@ class PublicSongsFromPlaylistAPI(APIView):
         serializer = SongSerializer2(songs, many=True)
 
         return Response({"data":serializer.data,"message":"all public songs from playlist displayed"}, status=status.HTTP_200_OK)
+
+class SongSearchAPI(APIView):
+    renderer_classes = [UserRenderer]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        query = request.GET.get('query')
+
+        if not query:
+            return Response({'message': 'No search parameters provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        songs = Song.objects.filter(is_private=False)
+
+        q_objects = Q()
+
+        if query:
+            q_objects |= Q(name__icontains=query)
+
+        q_objects |= Q(language__name__icontains=query)
+        q_objects |= Q(genre__name__icontains=query)
+        q_objects |= Q(mood__name__icontains=query)
+
+        songs = songs.filter(q_objects).distinct()
+
+        serializer = SongSerializer2(songs, many=True)
+        return Response({"data": serializer.data, "message": "Songs matching the search criteria"}, status=status.HTTP_200_OK)
