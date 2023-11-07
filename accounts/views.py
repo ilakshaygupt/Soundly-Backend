@@ -14,6 +14,7 @@ from accounts.serializers import *
 from accounts.utils import *
 from rest_framework.parsers import MultiPartParser, FormParser
 import cloudinary
+from accounts.models import MyUser
 
 
 class UserRegistrationEmailView(APIView):
@@ -202,29 +203,34 @@ class UserProfie(APIView):
 
     #Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
 
-# class UpdateProfile(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     parser_classes = (MultiPartParser, FormParser)
-#     renderer_classes = (UserRenderer,)
+class UpdateProfile(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+    # renderer_classes = (UserRenderer,)
 
-#     def put(self, request):
-#         user = request.user
-#         profile_pic_url = None
+    def patch(self, request):
+        try:
+            user = MyUser.objects.get(username=request.user)
+        except MyUser.DoesNotExist:
+            return Response({'message': 'User not found', 'data': ''}, status=status.HTTP_404_NOT_FOUND)
 
-#         if 'profile' in request.FILES:
-#             profile = request.FILES['profile']
-#             audio_response = cloudinary.uploader.upload(profile, secure=True)
-#             profile_pic_url = audio_response.get('url')
+        profile_pic_url = None
 
-#         # Update the user's username and/or profile_pic_url
-#         new_username = request.data.get('username', None)
-#         if new_username:
-#             user.username = new_username
+        if 'profile' in request.FILES:
+            profile = request.FILES['profile']
+            audio_response = cloudinary.uploader.upload(profile, secure=True)
+            profile_pic_url = audio_response.get('url')
 
-#         if profile_pic_url:
-#             user.profile_pic_url = profile_pic_url
+        serializer = UpdateProfileSerializer(user, data=request.data, partial=True)
 
-#         user.save()
-#         serializer = UpdateProfileSerializer(user)
-#         return Response({'message': 'User Data Updated', 'data': serializer.data}, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            user.is_artist=True
+            user.profile_pic_url = profile_pic_url
+
+            user.save()
+
+            return Response({'message': 'User Data Updated'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

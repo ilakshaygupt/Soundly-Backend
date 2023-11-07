@@ -8,8 +8,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from accounts.renderers import *
-from music.serializers import (PlaylistSerializer, SongCreateSerializer,
-                               SongDisplaySerializer, SongSerializer3)
+from music.serializers import *
 
 from .models import Genre, Language, Mood, Playlist, Song
 
@@ -204,12 +203,6 @@ class PlaylistAPI(APIView):
 
         serializer = PlaylistSerializer(playlist, data=request.data, partial=True)
         if serializer.is_valid():
-            # thumbnail_url = playlist.thumbnail_url
-            # if 'thumbnail' in request.FILES:
-            #     thumbnail = request.FILES['thumbnail']
-            #     thumbnail_response = cloudinary.uploader.upload(thumbnail, secure=True)
-            #     thumbnail_url = thumbnail_response.get('url')
-            #     playlist.thumbnail = thumbnail_url
             if playlist.artist != request.user:
                 return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
@@ -228,7 +221,7 @@ class PlaylistAPI(APIView):
         playlist.delete()
         return Response({'message': 'Playlist deleted'}, status=status.HTTP_204_NO_CONTENT)
 
-class PlaylistSongAPI(APIView):#display all songs from a playlist
+class PlaylistSongAPI(APIView): #display all songs from a playlist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -354,3 +347,19 @@ class SongSearchAPI(APIView):
 
         serializer = SongDisplaySerializer(songs, many=True)
         return Response({"data": serializer.data, "message": "Songs matching the search criteria"}, status=status.HTTP_200_OK)
+
+
+class GetSong(APIView):
+    renderer_classes = [UserRenderer]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, format=None):
+        try:
+            song = Song.objects.get(pk=pk)
+        except Song.DoesNotExist:
+            return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
+        if song.is_private:
+            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+        serializer = SongDataSerializer(song)
+        return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)

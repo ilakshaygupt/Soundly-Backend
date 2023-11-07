@@ -1,7 +1,8 @@
-# Create your models here.
+
+from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
-from django.db import models
+
 
 
 
@@ -43,7 +44,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     )
     phone_number = models.CharField(max_length=10,blank=True,null=True,unique=True)
     otp = models.CharField(max_length=4,blank=True,null=True)
-    proile_pic_url = models.URLField(blank=True,null=True,default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfrScK05sZxTgh7Bg4p_Anm_ZSxxqGHpCFA&usqp=CAU')
+    profile_pic_url = models.URLField(default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfrScK05sZxTgh7Bg4p_Anm_ZSxxqGHpCFA&usqp=CAU')
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_artist = models.BooleanField(default=False)

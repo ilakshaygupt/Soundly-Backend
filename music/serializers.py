@@ -26,14 +26,17 @@ class SongDisplaySerializer(serializers.ModelSerializer):
     language = serializers.CharField(required=True,error_messages={'required': 'Please enter a language'})
     mood = serializers.CharField(required=True,error_messages={'required': 'Please enter a mood'})
     genre = serializers.CharField(required=True,error_messages={'required': 'Please enter a genre'})
-    song_url = serializers.URLField(required=True,error_messages={'required': 'Please enter a song url'})
     thumbnail_url = serializers.URLField(required=True,error_messages={'required': 'Please enter a thumbnail url'})
 
     class Meta:
         model = Song
-        fields =  '__all__'
+        fields =  ['name','id','artist','language','mood','genre','thumbnail_url']
 
 class SongSerializer3(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields =  ['name']
+class SongDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = '__all__'
