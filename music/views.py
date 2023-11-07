@@ -1,25 +1,28 @@
 
-from rest_framework.response import Response
-from .models import  Playlist , Song , Language , Mood ,Genre
-from rest_framework import status
-from rest_framework.views import APIView
-from music.serializers import PlaylistSerializer ,SongSerializer , SongSerializer2 ,SongSerializer3
-from accounts.renderers import *
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Q
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from accounts.renderers import *
+from music.serializers import (PlaylistSerializer, SongCreateSerializer,
+                               SongDisplaySerializer, SongSerializer3)
+
+from .models import Genre, Language, Mood, Playlist, Song
 
 
 class SongAPI(APIView):
-    serializer_class = SongSerializer2
+    serializer_class = SongDisplaySerializer
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, format=None):
-        serializer = SongSerializer(data=request.data)
+        serializer = SongCreateSerializer(data=request.data)
         if serializer.is_valid():
             artist = request.user
             audio_url = None
@@ -73,18 +76,18 @@ class SongAPI(APIView):
 
 
     def get(self, request, pk=None, format=None):
-        if song.artist != request.user:
-            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         if pk is not None:
             try:
                 song = Song.objects.get(id=pk)
-                serializer = SongSerializer2(song)
+                if song.artist != request.user:
+                    return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+                serializer = SongDisplaySerializer(song)
                 return Response({"data":serializer.data,"message": "found song"})
             except Song.DoesNotExist:
                 return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            songs = Song.objects.all(artist=request.user)
-            serializer = SongSerializer2(songs, many=True)
+            songs = Song.objects.filter(artist=request.user)
+            serializer = SongDisplaySerializer(songs, many=True)
             return Response({"data":serializer.data,"message": "all songs"})
 
     def put(self, request, pk, format=None):
@@ -131,7 +134,8 @@ class SongAPI(APIView):
 
 
 import cloudinary
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser, MultiPartParser
+
 
 class PlaylistAPI(APIView):
     serializer_class = PlaylistSerializer
@@ -238,7 +242,7 @@ class PlaylistSongAPI(APIView):#display all songs from a playlist
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
 
         songs = playlist.songs.all()
-        serializer = SongSerializer2(songs, many=True)
+        serializer = SongDisplaySerializer(songs, many=True)
 
         return Response({"data":serializer.data,"message":"all songs displayed"}, status=status.HTTP_200_OK)
 
@@ -289,7 +293,7 @@ class AllPublicSongsAPI(APIView):
 
     def get(self, request, format=None):
         songs = Song.objects.filter(is_private=False)
-        serializer = SongSerializer2(songs, many=True)
+        serializer = SongDisplaySerializer(songs, many=True)
         return Response({"data":serializer.data,"message":"all public songs displayed"}, status=status.HTTP_200_OK)
 
 class AllPublicPlaylistsAPI(APIView):
@@ -317,7 +321,7 @@ class PublicSongsFromPlaylistAPI(APIView):
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
 
         songs = playlist.songs.filter(is_private=False)
-        serializer = SongSerializer2(songs, many=True)
+        serializer = SongDisplaySerializer(songs, many=True)
 
         return Response({"data":serializer.data,"message":"all public songs from playlist displayed"}, status=status.HTTP_200_OK)
 
@@ -342,8 +346,11 @@ class SongSearchAPI(APIView):
         q_objects |= Q(language__name__icontains=query)
         q_objects |= Q(genre__name__icontains=query)
         q_objects |= Q(mood__name__icontains=query)
+        q_objects |= Q(artist__username__icontains=query)
 
         songs = songs.filter(q_objects).distinct()
+        if not query:
+            return Response({'message': 'No search parameters provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = SongSerializer2(songs, many=True)
+        serializer = SongDisplaySerializer(songs, many=True)
         return Response({"data": serializer.data, "message": "Songs matching the search criteria"}, status=status.HTTP_200_OK)

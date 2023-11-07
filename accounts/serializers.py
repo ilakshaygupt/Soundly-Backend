@@ -112,3 +112,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
         fields=['username','email','phone_number']
+
+# class UpdateProfileSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model=MyUser
+#         fields=['username']

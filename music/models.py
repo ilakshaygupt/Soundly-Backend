@@ -1,6 +1,7 @@
-from django.db import models
-from accounts.models import  MyUser
 from cloudinary.models import CloudinaryField
+from django.db import models
+
+from accounts.models import MyUser
 
 
 class Language(models.Model):
@@ -33,6 +34,7 @@ class Song(models.Model):
     is_private = models.BooleanField(default=False)
     def __str__(self):
         return self.name
+
 
 class Playlist(models.Model):
     name = models.CharField(max_length=100)
