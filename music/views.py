@@ -10,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from accounts.renderers import *
 from music.serializers import *
 
-from .models import Genre, Language, Mood, Playlist, Song
+from .models import *
 
 
 class SongAPI(APIView):
@@ -363,3 +363,69 @@ class GetSong(APIView):
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         serializer = SongDataSerializer(song)
         return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)
+
+class FavouriteSongsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, song_id, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        song = Song.objects.get(id=song_id)
+        favourite.song.add(song)
+        return Response({"message": "Song added to favourites"}, status=status.HTTP_200_OK)
+
+    def delete(self, request, song_id, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        song = Song.objects.get(id=song_id)
+        if song in favourite.song.all():
+            favourite.song.remove(song)
+            return Response({"message": "Song removed from favourites"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Song is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetFavoriteSongsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        songs = favourite.song.all()
+        serializer = SongDisplaySerializer(songs, many=True)
+        return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
+
+
+class FavouritePlaylistsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, playlist_id, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        playlist = Playlist.objects.get(id=playlist_id)
+        favourite.playlist.add(playlist)
+        return Response({"message": "Playlist added to favourites"}, status=status.HTTP_200_OK)
+
+    def delete(self, request, playlist_id, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        playlist = Playlist.objects.get(id=playlist_id)
+        if playlist in favourite.playlist.all():
+            favourite.playlist.remove(playlist)
+            return Response({"message": "Playlist removed from favourites"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Playlist is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetFavoritePlaylistsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        favourite = Favourite.objects.get(user=request.user)
+        playlists = favourite.playlist.all()
+        serializer = PlaylistSerializer(playlists, many=True)
+        return Response({"data": serializer.data, "message": "Playlists found"}, status=status.HTTP_200_OK)
+# Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxOTcxNzg0LCJpYXQiOjE2OTkzNzk3ODQsImp0aSI6ImQ3MDg4MDk5MzE5NzRjMmRhNmRkNDdiOGZlZTdmNjVmIiwidXNlcl9pZCI6Imxha3NoYXkifQ.jK0cpgOs8vCr0A9Hpx6mvsZsuekR2mbsTTMuUgGDDXo

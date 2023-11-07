@@ -15,6 +15,7 @@ from accounts.utils import *
 from rest_framework.parsers import MultiPartParser, FormParser
 import cloudinary
 from accounts.models import MyUser
+from music.models import Favourite
 
 
 class UserRegistrationEmailView(APIView):
@@ -180,6 +181,8 @@ class VerifyOtpView(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             user.is_valid = True
             user.save()
+            fav_obj=Favourite.objects.create(user=user)
+            fav_obj.save()
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
