@@ -8,6 +8,7 @@ certifi
 cfgv
 chardet
 charset-normalizer
+cloudinary==1.36.0
 coreapi
 coreschema
 decouple
@@ -15,6 +16,7 @@ defusedxml
 distlib
 Django
 django-allauth
+django-cloudinary-storage==0.3.0
 django-cors-headers
 django-rest-auth
 django-rest-swagger
