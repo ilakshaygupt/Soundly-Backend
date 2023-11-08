@@ -19,9 +19,6 @@ class Mood(models.Model):
     def __str__(self):
         return self.name
 
-
-
-
 class Song(models.Model):
     name = models.CharField(max_length=100)
     artist = models.ForeignKey(MyUser,blank=True,on_delete=models.CASCADE,default=None,null=True)
