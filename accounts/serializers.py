@@ -116,4 +116,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['username','email','phone_number','profile_pic_url','is_artist','is_valid']
+        fields=['profile_pic_url','is_artist']

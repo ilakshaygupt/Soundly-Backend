@@ -11,7 +11,24 @@ class PlaylistSerializer(serializers.ModelSerializer):
         model = Playlist
         fields = '__all__'
 
+class ChangePlaylistSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True,error_messages={'required': 'Please enter a name'})
+    description = serializers.CharField(required=True,error_messages={'required': 'Please enter a description'})
+    thumbnail_url = serializers.URLField(required=False)
+    class Meta:
+        model = Playlist
+        fields = ['name','description','thumbnail_url']
+class PlaylistDisplaySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True,error_messages={'required': 'Please enter a name'})
+    description = serializers.CharField(required=True,error_messages={'required': 'Please enter a description'})
+    thumbnail_url = serializers.URLField(required=False)
+    artist = serializers.CharField(required=True,error_messages={'required': 'Please enter an artist'})
+    class Meta:
+        model = Playlist
+        fields = ['name','id','description','thumbnail_url','artist']
+
 class SongCreateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True,error_messages={'required': 'Please enter a name'})
     language_name = serializers.CharField(required=True,error_messages={'required': 'Please enter a language'})
     mood_name = serializers.CharField(required=True,error_messages={'required': 'Please enter a mood'})
     genre_name = serializers.CharField(required=True,error_messages={'required': 'Please enter a genre'})
@@ -33,6 +50,8 @@ class SongDisplaySerializer(serializers.ModelSerializer):
         fields =  ['name','id','artist','language','mood','genre','thumbnail_url']
 
 class ChangeSongSerializer(serializers.ModelSerializer):
+    is_private = serializers.BooleanField(required=True,error_messages={'required': 'Please enter a public status'})
+
     class Meta:
         model = Song
-        fields =  ['name']
+        fields =  ['name','is_private']

@@ -1,7 +1,9 @@
-from django.core.exceptions import ValidationError
 import random
 
+import cloudinary
 import requests
+from django.core.exceptions import ValidationError
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
@@ -12,9 +14,6 @@ from accounts.models import MyUser
 from accounts.renderers import UserRenderer
 from accounts.serializers import *
 from accounts.utils import *
-from rest_framework.parsers import MultiPartParser, FormParser
-import cloudinary
-from accounts.models import MyUser
 from music.models import Favourite
 
 
@@ -186,8 +185,8 @@ class VerifyOtpView(APIView):
             user.is_valid = True
             user.otp = None
             user.save()
-            fav_obj=Favourite.objects.create(user=user)
-            fav_obj.save()
+            if not Favourite.objects.filter(user=user).exists():
+                Favourite.objects.create(user=user)
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
@@ -215,7 +214,7 @@ class UpdateProfile(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
-    # renderer_classes = (UserRenderer,)
+    renderer_classes = (UserRenderer,)
 
     def patch(self, request):
         try:
@@ -223,7 +222,7 @@ class UpdateProfile(APIView):
         except MyUser.DoesNotExist:
             return Response({'message': 'User not found', 'data': ''}, status=status.HTTP_404_NOT_FOUND)
 
-        profile_pic_url = None
+        profile_pic_url = request.user.profile_pic_url
 
         if 'profile' in request.FILES:
             profile = request.FILES['profile']
@@ -234,7 +233,7 @@ class UpdateProfile(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            user.is_artist=True
+
             user.profile_pic_url = profile_pic_url
 
             user.save()
