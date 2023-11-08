@@ -12,6 +12,10 @@ from accounts.models import MyUser
 from accounts.renderers import UserRenderer
 from accounts.serializers import *
 from accounts.utils import *
+from rest_framework.parsers import MultiPartParser, FormParser
+import cloudinary
+from accounts.models import MyUser
+from music.models import Favourite
 
 
 class UserRegistrationEmailView(APIView):
@@ -177,6 +181,8 @@ class VerifyOtpView(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             user.is_valid = True
             user.save()
+            fav_obj=Favourite.objects.create(user=user)
+            fav_obj.save()
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
@@ -187,3 +193,47 @@ class VerifyOtpView(APIView):
                     "refresh_token": refresh_token}
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfie(APIView):
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
+    renderer_classes = (UserRenderer,)
+    def get(self,request):
+        user=request.user
+        print(request)
+        serializer=UserProfileSerializer(user)
+        return Response({'message': 'User Data send',"data" :serializer.data},status=status.HTTP_200_OK)
+
+    #Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
+
+class UpdateProfile(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+    # renderer_classes = (UserRenderer,)
+
+    def patch(self, request):
+        try:
+            user = MyUser.objects.get(username=request.user)
+        except MyUser.DoesNotExist:
+            return Response({'message': 'User not found', 'data': ''}, status=status.HTTP_404_NOT_FOUND)
+
+        profile_pic_url = None
+
+        if 'profile' in request.FILES:
+            profile = request.FILES['profile']
+            audio_response = cloudinary.uploader.upload(profile, secure=True)
+            profile_pic_url = audio_response.get('url')
+
+        serializer = UpdateProfileSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            user.is_artist=True
+            user.profile_pic_url = profile_pic_url
+
+            user.save()
+
+            return Response({'message': 'User Data Updated'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

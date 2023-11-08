@@ -1,8 +1,9 @@
-# Create your models here.
+
+from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
-from django.db import models
-from django.utils import timezone
+
+
 
 
 class MyUserManager(BaseUserManager):
@@ -43,10 +44,15 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     )
     phone_number = models.CharField(max_length=10,blank=True,null=True,unique=True)
     otp = models.CharField(max_length=4,blank=True,null=True)
+    profile_pic_url = models.URLField(default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfrScK05sZxTgh7Bg4p_Anm_ZSxxqGHpCFA&usqp=CAU')
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_artist = models.BooleanField(default=False)
     is_valid=models.BooleanField(default=False,null=True,blank=True)
+    # fav_artists=models.ManyToManyField('self',blank=True,null=True)
+    # fav_languages=models.ManyToManyField(Language,blank=True,null=True)
+    # fav_playlist=models.ManyToManyField(Playlist,blank=True,null=True)
+    # fav_songs=models.ManyToManyField(Song,blank=True,null=True)
     objects = MyUserManager()
     USERNAME_FIELD = "username"
 
