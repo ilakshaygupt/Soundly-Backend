@@ -21,7 +21,7 @@ from music.models import Favourite
 class UserRegistrationEmailView(APIView):
     renderer_classes = [UserRenderer]
 
-    def post(self, request, format=None):
+    def post(self, request):
 
         serializer = UserRegistrationEmailSerializer(data=request.data)
         if serializer.is_valid():
@@ -55,7 +55,7 @@ class UserRegistrationEmailView(APIView):
 class UserRegistrationPhoneView(APIView):
     renderer_classes = [UserRenderer]
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserRegistrationPhoneSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data.get('username').lower()
@@ -92,7 +92,7 @@ class UserRegistrationPhoneView(APIView):
 class ForgotEmail(APIView):
     renderer_classes = [UserRenderer]
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = ForgotEmailSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data.get('email').lower()
@@ -114,7 +114,7 @@ class ForgotEmail(APIView):
 class ForgotPhone(APIView):
     renderer_classes = [UserRenderer]
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = ForgotPhoneSerializer(data=request.data)
         if serializer.is_valid():
             phone_number = serializer.validated_data.get('phone_number').lower()
@@ -134,7 +134,7 @@ class ForgotPhone(APIView):
 
 class UserLoginView(APIView):
     renderer_classes = (UserRenderer,)
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -164,7 +164,7 @@ class UserLoginView(APIView):
 class VerifyOtpView(APIView):
     renderer_classes = (UserRenderer,)
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data.get('username').lower()
@@ -175,11 +175,16 @@ class VerifyOtpView(APIView):
                         "error": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
+            if not user.otp:
+                return Response({
+                    "error": "OTP already used"
+                }, status=status.HTTP_400_BAD_REQUEST)
             if not user.otp == otp:
                 return Response({
                     "error": "Invalid otp"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user.is_valid = True
+            user.otp = None
             user.save()
             fav_obj=Favourite.objects.create(user=user)
             fav_obj.save()
@@ -195,8 +200,8 @@ class VerifyOtpView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfie(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     renderer_classes = (UserRenderer,)
     def get(self,request):
         user=request.user

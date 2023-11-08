@@ -32,11 +32,7 @@ class SongDisplaySerializer(serializers.ModelSerializer):
         model = Song
         fields =  ['name','id','artist','language','mood','genre','thumbnail_url']
 
-class SongSerializer3(serializers.ModelSerializer):
+class ChangeSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields =  ['name']
-class SongDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Song
-        fields = '__all__'

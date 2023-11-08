@@ -3,8 +3,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-     path('api/songs/', views.SongAPI.as_view(), name='song-view'),
-     path('api/songs/<int:pk>/', views.SongAPI.as_view(), name='song-view'),
+    path('api/songs/', views.SongAPI.as_view(), name='song-view'),
+    path('api/songs/<int:pk>/', views.SongAPI.as_view(), name='song-view'),
     path('api/playlists/', views.PlaylistAPI.as_view(), name='playlist-view'),
     path('api/playlists/<int:pk>/', views.PlaylistAPI.as_view(), name='playlist-view'),
     path('api/playlists/<int:pk>/songs/', views.PlaylistSongAPI.as_view(), name='playlist-song-view'),#display all songs in a playlist
@@ -18,5 +18,4 @@ urlpatterns = [
     path('api/favourite/songs/', views.GetFavoriteSongsAPI.as_view(), name='favourite-songs-view'),
     path('api/favourite/playlist/<int:playlist_id>/', views.FavouritePlaylistsAPI.as_view(), name='favourite-playlists-view'),
     path('api/favourite/playlists/', views.GetFavoritePlaylistsAPI.as_view(), name='favourite-playlists-view'),
-
 ]
