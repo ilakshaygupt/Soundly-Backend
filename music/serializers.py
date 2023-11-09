@@ -73,11 +73,13 @@ class SongDisplaySerializer(serializers.ModelSerializer):
                                          'required': 'Please enter a thumbnail url'})
     artist = serializers.CharField(required=True, error_messages={
                                    'required': 'Please enter an artist'})
-
+    is_private = serializers.BooleanField(required=True, error_messages={
+                                            'required': 'Please enter a public status'}
+    )
     class Meta:
         model = Song
         fields = ['name', 'id', 'uploader', 'language',
-                  'mood', 'genre', 'thumbnail_url', 'artist']
+                  'mood', 'genre', 'thumbnail_url', 'artist', 'is_private']
 
 
 class ChangeSongSerializer(serializers.ModelSerializer):
