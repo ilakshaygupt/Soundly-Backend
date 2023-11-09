@@ -30,8 +30,6 @@ class UserRegistrationEmailSerializer(serializers.ModelSerializer):
         return user
 
 
-
-
 class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=10, min_length=10, error_messages={
                                          'blank': 'Phone number cannot be blank',
@@ -55,6 +53,7 @@ class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class ForgotEmailSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
                                                                    'invalid': 'Email format is not valid',
@@ -64,12 +63,14 @@ class ForgotEmailSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ['email']
 
+
 class ForgotPhoneSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=10)
 
     class Meta:
         model = MyUser
         fields = ['phone_number']
+
 
 class UserLoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=255, error_messages={'blank': 'Username cant be blank',
@@ -79,6 +80,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ['username']
 
+
 class VerifyAccountSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255, error_messages={'blank': 'Username cant be blank',
                                                                      'unique': 'User with this Email already exists'})
@@ -87,6 +89,7 @@ class VerifyAccountSerializer(serializers.Serializer):
                                 'min_length': 'otp should be 4 digits',
                                 'max_length': 'otp should be 4 digits'
                                 })
+
 
 class VerifyForgotEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
@@ -98,22 +101,27 @@ class VerifyForgotEmailSerializer(serializers.Serializer):
                                 'max_length': 'otp should be 4 digits'
                                 })
 
+
 class VerifyForgotPhoneSerializer(serializers.Serializer):
     phone_number = serializers.CharField(min_length=10, max_length=10, error_messages={
                                          'blank': 'Phone number cannot be blank',
                                          'min_length': 'Phone number should be 10 digits',
                                          'max_length': 'Phone number should be 10 digits'})
-    otp = serializers.CharField(max_length=4,min_length=4, error_messages={
+    otp = serializers.CharField(max_length=4, min_length=4, error_messages={
                                 'blank': 'otp cannot be blank',
                                 'min_length': 'otp should be 4 digits',
                                 'max_length': 'otp should be 4 digits'
                                 })
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model=MyUser
-        fields=['username','email','phone_number','profile_pic_url','is_artist','is_valid']
+        model = MyUser
+        fields = ['username', 'email', 'phone_number',
+                  'profile_pic_url', 'is_uploader', 'is_valid']
+
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model=MyUser
-        fields=['username','email','phone_number','profile_pic_url','is_artist','is_valid']
+        model = MyUser
+        fields = ['profile_pic_url', 'is_uploader']
