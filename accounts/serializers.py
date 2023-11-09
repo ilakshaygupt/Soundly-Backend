@@ -111,9 +111,9 @@ class VerifyForgotPhoneSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['username','email','phone_number','profile_pic_url','is_artist','is_valid']
+        fields=['username','email','phone_number','profile_pic_url','is_uploader','is_valid']
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['profile_pic_url','is_artist']
+        fields=['profile_pic_url','is_uploader']

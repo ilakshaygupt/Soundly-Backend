@@ -19,9 +19,15 @@ class Mood(models.Model):
     def __str__(self):
         return self.name
 
+class Artist(models.Model):
+    name=models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
 class Song(models.Model):
     name = models.CharField(max_length=100)
-    artist = models.ForeignKey(MyUser,blank=True,on_delete=models.CASCADE,default=None,null=True)
+    artist = models.ForeignKey(Artist,blank=True,default=None,null=True,on_delete=models.CASCADE)
+    uploader = models.ForeignKey(MyUser,blank=True,on_delete=models.CASCADE,default=None,null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, blank=True, null=True)
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, blank=True, null=True)
@@ -37,7 +43,7 @@ class Playlist(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     thumbnail_url = models.URLField(blank=True,null=True,default=None)
-    artist = models.ForeignKey(MyUser,on_delete=models.CASCADE,blank=True,default=None,null=True)
+    uploader = models.ForeignKey(MyUser,on_delete=models.CASCADE,blank=True,default=None,null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     is_private = models.BooleanField(default=False)
