@@ -55,3 +55,12 @@ class ChangeSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields =  ['name','is_private']
+
+class SongSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True,error_messages={'required': 'Please enter a name'})
+    song_url = serializers.URLField(required=True,error_messages={'required': 'Please enter an audio url'})
+    thumbnail_url = serializers.URLField(required=True,error_messages={'required': 'Please enter a thumbnail url'})
+
+    class Meta:
+        model = Song
+        fields = ['id','name','song_url','thumbnail_url']

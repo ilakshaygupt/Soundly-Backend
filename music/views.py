@@ -328,7 +328,7 @@ class GetSong(APIView):
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if request.user == song.artist or not song.is_private:
-            serializer = SongDisplaySerializer(song)
+            serializer = SongSerializer(song)
             return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)
 
         return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
