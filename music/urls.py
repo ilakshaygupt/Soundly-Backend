@@ -3,9 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('api/songs/', views.SongAPI.as_view(), name='song-view'),# artist to add a song and get all songs
+    path('api/songs/', views.SongAPI.as_view(), name='song-view'),# uploader to add a song and get all songs
     path('api/songs/<int:pk>/', views.SongAPI.as_view(), name='song-view'),#  put path delete or get a single song
-    path('api/playlists/', views.PlaylistAPI.as_view(), name='playlist-view'),# artist or user to add a playlist or get all playlists
+    path('api/playlists/', views.PlaylistAPI.as_view(), name='playlist-view'),# uploader or user to add a playlist or get all playlists
     path('api/playlists/<int:pk>/', views.PlaylistAPI.as_view(), name='playlist-view'),#  put path delete or get a single playlist by id
     path('api/playlists/<int:pk>/songs/', views.PlaylistSongAPI.as_view(), name='playlist-song-view'),#display all songs in users's playlist
     path('api/playlists/<int:pk>/songs/<int:song_pk>/', views.AddSongToPlaylistAPI.as_view(), name='playlist-song-view'),#add remove a song to a playlist
