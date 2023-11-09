@@ -1,6 +1,10 @@
 
+
+from operator import itemgetter
+
 import cloudinary
 from django.db.models import Q
+from fuzzywuzzy import fuzz, process
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -104,8 +108,11 @@ class SongAPI(APIView):
                 return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             songs = Song.objects.filter(uploader=request.user)
-            serializer = SongDisplaySerializer(songs, many=True)
-            return Response({"data": serializer.data, "message": "all songs"})
+            public_songs = songs.filter(is_private=False)
+            private_songs = songs.filter(is_private=True)
+            public_songs_data = SongDisplaySerializer(public_songs, many=True)
+            private_songs_data = SongDisplaySerializer(private_songs, many=True)
+            return Response({"data":{"public songs":public_songs_data.data,"private songs":private_songs_data.data}, "message": "all songs"})
 
     def patch(self, request, pk):
         try:
@@ -297,6 +304,8 @@ class PublicSongsFromPlaylistAPI(APIView):
         return Response({"data": serializer.data, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
 
 
+
+
 class SongSearchAPI(APIView):
     renderer_classes = [UserRenderer]
 
@@ -310,12 +319,22 @@ class SongSearchAPI(APIView):
 
         q_objects = Q()
 
-        q_objects |= Q(name__icontains=query)
-        q_objects |= Q(language__name__icontains=query)
-        q_objects |= Q(genre__name__icontains=query)
-        q_objects |= Q(mood__name__icontains=query)
-        q_objects |= Q(uploader__username__icontains=query)
-        q_objects |= Q(artist__name__icontains=query)
+        
+        
+        def fuzzy_search(field, query):
+            values = Song.objects.values_list(field, flat=True).exclude(**{f'{field}__isnull': True})
+            matches = process.extract(query, values, scorer=fuzz.partial_ratio, limit=None)
+            sorted_matches = sorted(matches, key=itemgetter(1), reverse=True)
+            similar_values = [value for value, score in matches if score > 70]
+            return Q(**{f'{field}__in': similar_values})
+
+        
+        q_objects |= fuzzy_search('name', query)
+        q_objects |= fuzzy_search('language__name', query)
+        q_objects |= fuzzy_search('genre__name', query)
+        q_objects |= fuzzy_search('mood__name', query)
+        q_objects |= fuzzy_search('uploader__username', query)
+        q_objects |= fuzzy_search('artist__name', query)
 
         songs = songs.filter(q_objects).distinct()
         if not songs:
