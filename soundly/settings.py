@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'accounts.apps.AccountsConfig',
     'music.apps.MusicConfig',
+    'game.apps.GameConfig',
     'cloudinary_storage',
     'cloudinary'
 ]
