@@ -58,7 +58,8 @@ class UserRegistrationPhoneView(APIView):
         serializer = UserRegistrationPhoneSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data.get('username').lower()
-            phone_number = serializer.validated_data.get('phone_number').lower()
+            phone_number = serializer.validated_data.get(
+                'phone_number').lower()
 
             try:
                 user = MyUser.objects.get(username=username)
@@ -87,7 +88,9 @@ class UserRegistrationPhoneView(APIView):
             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#below for valid
+# below for valid
+
+
 class ForgotEmail(APIView):
     renderer_classes = [UserRenderer]
 
@@ -97,42 +100,43 @@ class ForgotEmail(APIView):
             email = serializer.validated_data.get('email').lower()
             try:
                 # use = MyUser.objects.filter(email=email).first()
-                user=MyUser.objects.get(email=email)
+                user = MyUser.objects.get(email=email)
                 if not user.is_valid:
                     return Response({"errors": "User is not valid"}, status=status.HTTP_400_BAD_REQUEST)
                 send_otp_via_email(email)
-                user_obj=MyUser.objects.get(email=email)
-                user_obj=user_obj.username
-                return Response({"message": "OTP sent to registered Email","data": user_obj}, status=status.HTTP_200_OK)
+                user_obj = MyUser.objects.get(email=email)
+                user_obj = user_obj.username
+                return Response({"message": "OTP sent to registered Email", "data": user_obj}, status=status.HTTP_200_OK)
             except:
                 return Response({"errors": "User with this email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-#below
+# below
 class ForgotPhone(APIView):
     renderer_classes = [UserRenderer]
 
     def post(self, request):
         serializer = ForgotPhoneSerializer(data=request.data)
         if serializer.is_valid():
-            phone_number = serializer.validated_data.get('phone_number').lower()
+            phone_number = serializer.validated_data.get(
+                'phone_number').lower()
             try:
                 user = MyUser.objects.filter(phone_number=phone_number).first()
                 otp = generate_otp()
                 send_otp_via_sms(phone_number, otp)
                 user.otp = otp
                 user.save()
-                return Response({"message": "OTP sent to registered Phone Number","data":user.username}, status=status.HTTP_200_OK)
+                return Response({"message": "OTP sent to registered Phone Number", "data": user.username}, status=status.HTTP_200_OK)
             except:
                 return Response({"errors": "User with this phone number does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):
     renderer_classes = (UserRenderer,)
+
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
@@ -140,7 +144,7 @@ class UserLoginView(APIView):
             username = serializer.validated_data.get('username').lower()
             try:
                 use = MyUser.objects.filter(username=username).first()
-                user=MyUser.objects.get(username=username)
+                user = MyUser.objects.get(username=username)
                 if user and user.is_valid:
                     if user.phone_number:
                         otp = generate_otp()
@@ -171,7 +175,7 @@ class VerifyOtpView(APIView):
             user = MyUser.objects.filter(username=username)
             if not user.exists():
                 return Response({
-                        "error": "User does not exist"
+                    "error": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
             if not user.otp:
@@ -198,17 +202,20 @@ class VerifyOtpView(APIView):
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserProfie(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     renderer_classes = (UserRenderer,)
-    def get(self,request):
-        user=request.user
-        print(request)
-        serializer=UserProfileSerializer(user)
-        return Response({'message': 'User Data send',"data" :serializer.data},status=status.HTTP_200_OK)
 
-    #Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
+    def get(self, request):
+        user = request.user
+        print(request)
+        serializer = UserProfileSerializer(user)
+        return Response({'message': 'User Data send', "data": serializer.data}, status=status.HTTP_200_OK)
+
+    # Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
+
 
 class UpdateProfile(APIView):
     authentication_classes = [JWTAuthentication]
@@ -229,7 +236,8 @@ class UpdateProfile(APIView):
             audio_response = cloudinary.uploader.upload(profile, secure=True)
             profile_pic_url = audio_response.get('url')
 
-        serializer = UpdateProfileSerializer(user, data=request.data, partial=True)
+        serializer = UpdateProfileSerializer(
+            user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
