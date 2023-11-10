@@ -54,9 +54,9 @@ class Song(models.Model):
 
 
 class Playlist(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    thumbnail_url = models.URLField(blank=True, null=True, default=None)
+    name = models.CharField(max_length=20)
+    description = models.TextField(max_length=50, blank=True, null=True)
+    thumbnail_url = models.URLField(blank=True, null=True, default='https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2')
     uploader = models.ForeignKey(
         MyUser, on_delete=models.CASCADE, blank=True, default=None, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -75,6 +75,7 @@ class Favourite(models.Model):
     playlist = models.ManyToManyField(
         Playlist, blank=True, default=None, null=True)
     song = models.ManyToManyField(Song, blank=True, default=None, null=True)
-
+    artist = models.ManyToManyField(
+        Artist, blank=True, default=None, null=True)
     def __str__(self):
         return self.user.username
