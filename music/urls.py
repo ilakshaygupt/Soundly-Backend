@@ -29,8 +29,8 @@ urlpatterns = [
          name='favourite-songs-view'),  # add or remove a song from the user favourites
     path('api/favourite/songs/', views.GetFavoriteSongsAPI.as_view(),
          name='favourite-songs-view'),  # get all user favourite songs
-    path('api/favourite/playlist/<int:playlist_id>/', views.FavouritePlaylistsAPI.as_view(),
-         name='favourite-playlists-view'),  # add or remove a playlist from the user favourites
-    path('api/favourite/playlists/', views.GetFavoritePlaylistsAPI.as_view(),
-         name='favourite-playlists-view'),  # get all user favourite playlists
+    path('api/favourite/artist/<int:artist_id>/', views.FavouriteartistsAPI.as_view(),
+         name='favourite-artists-view'),  # add or remove a artist from the user favourites
+    path('api/favourite/artist/', views.GetFavoriteartistAPI.as_view(),
+         name='favourite-artist-view'),  # get all user favourite artist
 ]
