@@ -344,17 +344,21 @@ class SongSearchAPI(APIView):
 
 class GetSong(APIView):
     renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         try:
             song = Song.objects.get(pk=pk)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
-        if request.user == song.uploader or not song.is_private:
+        if  song.is_private:
+            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+        else:
             serializer = SongSerializer(song,context={'user': request.user})
             return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)
 
-        return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+        
 
 
 
