@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Playlist, Song
+from .models import Playlist, Song ,Favourite
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -76,11 +76,15 @@ class SongDisplaySerializer(serializers.ModelSerializer):
     is_private = serializers.BooleanField(required=True, error_messages={
                                             'required': 'Please enter a public status'}
     )
+    is_liked = serializers.SerializerMethodField()
+    
     class Meta:
         model = Song
         fields = ['name', 'id', 'uploader', 'language',
-                  'mood', 'genre', 'thumbnail_url', 'artist', 'is_private']
-
+                  'mood', 'genre', 'thumbnail_url', 'artist', 'is_private','is_liked']
+    def get_is_liked(self, obj):
+        user = self.context.get('user')
+        return Favourite.objects.filter(user=user, song=obj).exists()
 
 class ChangeSongSerializer(serializers.ModelSerializer):
     is_private = serializers.BooleanField(required=True, error_messages={
@@ -98,7 +102,19 @@ class SongSerializer(serializers.ModelSerializer):
                                     'required': 'Please enter an audio url'})
     thumbnail_url = serializers.URLField(required=True, error_messages={
                                          'required': 'Please enter a thumbnail url'})
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Song
-        fields = ['id', 'name', 'song_url', 'thumbnail_url']
+        fields = ['id', 'name', 'song_url', 'thumbnail_url','is_liked']
+    def get_is_liked(self, obj):
+        user = self.context.get('user')
+        return Favourite.objects.filter(user=user, song=obj).exists()
+
+
+class artistSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, error_messages={
+                                 'required': 'Please enter a name'})
+    class Meta:
+        model = Song
+        fields = ['id', 'name']
