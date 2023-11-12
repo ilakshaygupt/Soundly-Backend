@@ -48,6 +48,7 @@ class Song(models.Model):
     song_url = models.URLField(blank=True, null=True, default=None)
     thumbnail_url = models.URLField(blank=True, null=True, default=None)
     is_private = models.BooleanField(default=False)
+    lyrics_url = models.URLField(blank=True, null=True, default=None)
 
     def __str__(self):
         return self.name
@@ -63,6 +64,7 @@ class Playlist(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     is_private = models.BooleanField(default=False)
     songs = models.ManyToManyField(Song, blank=True, default=None, null=True)
+    
 
     def __str__(self):
         return self.name
