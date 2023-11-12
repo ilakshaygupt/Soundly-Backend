@@ -1,6 +1,7 @@
 
 
 from operator import itemgetter
+import re
 
 import cloudinary
 from django.db.models import Q
@@ -47,7 +48,11 @@ class SongAPI(APIView):
                     return Response({'message': 'Thumbnail file type must be png or jpeg'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
-
+            if 'lyrics' in request.FILES:
+                if request.FILES['lyrics'].size > 4000000:
+                    return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
+                if not re.search(r'\.srt$', request.FILES['lyrics'].name, re.IGNORECASE):
+                    return Response({'message': 'Lyrics file type must be srt'}, status=status.HTTP_400_BAD_REQUEST)
             thumbnail = request.FILES['thumbnail']
             thumbnail_response = cloudinary.uploader.upload(
                 thumbnail, secure=True)
@@ -56,6 +61,10 @@ class SongAPI(APIView):
             audio_response = cloudinary.uploader.upload(
                 audio, secure=True, resource_type='video')
             audio_url = audio_response.get('url')
+            lyrics = request.FILES['lyrics']
+            lyrics_response = cloudinary.uploader.upload(
+                lyrics, secure=True, resource_type='raw')
+            lyrics_url = lyrics_response.get('url')
             language_name = serializer.validated_data.pop(
                 'language_name', None)
             mood_name = serializer.validated_data.pop('mood_name', None)
@@ -87,6 +96,7 @@ class SongAPI(APIView):
                 mood=mood,
                 genre=genre,
                 artist=artist,
+                lyrics_url=lyrics_url,
                 **serializer.validated_data
             )
 
@@ -95,7 +105,34 @@ class SongAPI(APIView):
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    def patch(self, request, pk):
+        try:
+            song = Song.objects.get(id=pk)
+        except Song.DoesNotExist:
+            return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
+        if song.uploader != request.user:
+            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+        if 'lyrics' in request.FILES:
+            if request.FILES['lyrics'].size > 4000000:
+                return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
+            if not re.search(r'\.srt$', request.FILES['lyrics'].name, re.IGNORECASE):
+                return Response({'message': 'Lyrics file type must be srt'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Lyrics is required'}, status=status.HTTP_400_BAD_REQUEST)
+        lyrics = request.FILES['lyrics']
+        lyrics_response = cloudinary.uploader.upload(
+            lyrics, secure=True, resource_type='raw')
+        lyrics_url = lyrics_response.get('url')
+        song.lyrics_url = lyrics_url
+        serializer = ChangeSongSerializer(
+            song, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Song partially updated',
+                "data": serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request, pk=None):
         if pk is not None:
             try:
@@ -114,22 +151,7 @@ class SongAPI(APIView):
             private_songs_data = SongDisplaySerializer(private_songs, many=True)
             return Response({"data":{"public songs":public_songs_data.data,"private songs":private_songs_data.data}, "message": "all songs"})
 
-    def patch(self, request, pk):
-        try:
-            song = Song.objects.get(id=pk)
-        except Song.DoesNotExist:
-            return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
-        if song.uploader != request.user:
-            return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
-        serializer = ChangeSongSerializer(
-            song, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({
-                'message': 'Song partially updated',
-                "data": serializer.data
-            })
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
     def delete(self, request, pk):
         try:
@@ -352,7 +374,7 @@ class GetSong(APIView):
             song = Song.objects.get(pk=pk)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
-        if  song.is_private:
+        if  song.is_private and song.uploader != request.user:
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         else:
             serializer = SongSerializer(song,context={'user': request.user})
