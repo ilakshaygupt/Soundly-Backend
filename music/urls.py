@@ -19,7 +19,7 @@ urlpatterns = [
          name='all-public-songs-view'),  # get all public songs
     path('api/allpublicplaylists/', views.AllPublicPlaylistsAPI.as_view(),
          name='all-public-playlists-view'),  # get all public playlists
-    path('api/allpublicplaylists/<int:pk>/', views.PublicSongsFromPlaylistAPI.as_view(),
+    path('api/allpublicplaylists/<int:pk>/', views.PublicSongsFromPlaylistAPI.as_view() ,
          name='public-songs-from-playlist-view'),  # get all public songs from a single public playlist
     path("api/songsearch/", views.SongSearchAPI.as_view(),
          name="song-search-view"),  # search for a song
@@ -29,8 +29,6 @@ urlpatterns = [
          name='favourite-songs-view'),  # add or remove a song from the user favourites
     path('api/favourite/songs/', views.GetFavoriteSongsAPI.as_view(),
          name='favourite-songs-view'),  # get all user favourite songs
-    path('api/favourite/artist/<int:artist_id>/', views.FavouriteartistsAPI.as_view(),
-         name='favourite-artists-view'),  # add or remove a artist from the user favourites
     path('api/favourite/artist/', views.GetFavoriteartistAPI.as_view(),
          name='favourite-artist-view'),  # get all user favourite artist
 ]
