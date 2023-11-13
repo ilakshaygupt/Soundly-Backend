@@ -178,7 +178,8 @@ class PlaylistAPI(APIView):
             serializer.save(uploader=uploader)
             return Response({
                 "status": status.HTTP_201_CREATED,
-                'message': 'Playlist created successfully'
+                'message': 'Playlist created successfully',
+                'data': serializer.data
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
