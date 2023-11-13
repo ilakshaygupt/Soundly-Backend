@@ -71,7 +71,6 @@ class SongDisplaySerializer(serializers.ModelSerializer):
                                   'required': 'Please enter a genre'})
     thumbnail_url = serializers.URLField(required=True, error_messages={
                                          'required': 'Please enter a thumbnail url'})
-    lyrics_url = serializers.URLField(required=False)
     artist = serializers.CharField(required=True, error_messages={
                                    'required': 'Please enter an artist'})
     is_private = serializers.BooleanField(required=True, error_messages={
@@ -81,7 +80,7 @@ class SongDisplaySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Song
-        fields = ['name', 'id', 'uploader', 'language','lyrics_url',
+        fields = ['name', 'id', 'uploader', 'language',
                   'mood', 'genre', 'thumbnail_url', 'artist', 'is_private','is_liked']
     def get_is_liked(self, obj):
         user = self.context.get('user')
@@ -103,8 +102,8 @@ class SongSerializer(serializers.ModelSerializer):
                                     'required': 'Please enter an audio url'})
     thumbnail_url = serializers.URLField(required=True, error_messages={
                                          'required': 'Please enter a thumbnail url'})
-    lyrics_url = serializers.URLField(required=False)
     is_liked = serializers.SerializerMethodField()
+    lyrics_url = serializers.URLField(required=False)
 
     class Meta:
         model = Song
@@ -117,6 +116,10 @@ class SongSerializer(serializers.ModelSerializer):
 class artistSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
                                  'required': 'Please enter a name'})
+    thumbnail_url = serializers.URLField(required=False, error_messages={
+                                         'required': 'Please enter a thumbnail url'})
     class Meta:
         model = Song
-        fields = ['id', 'name']
+        fields = ['id', 'name','thumbnail_url']
+
+        
