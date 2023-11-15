@@ -103,10 +103,11 @@ class SongSerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.URLField(required=True, error_messages={
                                          'required': 'Please enter a thumbnail url'})
     is_liked = serializers.SerializerMethodField()
+    lyrics_url = serializers.URLField(required=False)
 
     class Meta:
         model = Song
-        fields = ['id', 'name', 'song_url', 'thumbnail_url','is_liked']
+        fields = ['id', 'name', 'song_url', 'thumbnail_url','is_liked','lyrics_url']
     def get_is_liked(self, obj):
         user = self.context.get('user')
         return Favourite.objects.filter(user=user, song=obj).exists()
@@ -115,6 +116,10 @@ class SongSerializer(serializers.ModelSerializer):
 class artistSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
                                  'required': 'Please enter a name'})
+    thumbnail_url = serializers.URLField(required=False, error_messages={
+                                         'required': 'Please enter a thumbnail url'})
     class Meta:
         model = Song
-        fields = ['id', 'name']
+        fields = ['id', 'name','thumbnail_url']
+
+        
