@@ -378,12 +378,35 @@ class GetSong(APIView):
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
+            
         if song.is_private and song.uploader != request.user:
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         else:
             serializer = SongSerializer(song, context={'user': request.user})
+            try:
+                recently_played = RecentlyPlayed.objects.get(user=request.user,song=song)
+                recently_played.save()
+            except RecentlyPlayed.DoesNotExist:
+                recently_played = RecentlyPlayed.objects.create(user=request.user,song=song)
+                recently_played.save()
+
             return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)
 
+class RecentlyPlayedAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        try:
+            recently_played = RecentlyPlayed.objects.filter(user=request.user)
+            if recently_played.count() == 0:
+                return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
+        except RecentlyPlayed.DoesNotExist :
+            return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
+        songs = Song.objects.filter(recentlyplayed__in=recently_played).order_by('-recentlyplayed__timestamp')[:6]
+        serializer = SongDisplaySerializer(
+            songs, many=True, context={'user': request.user})
+        return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
 
 class FavouriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -503,3 +526,4 @@ class UpdateDurationFromUrl(APIView):
         except Exception as e:
             print(f"Error getting duration for {audio_url}: {str(e)}")
             return None
+

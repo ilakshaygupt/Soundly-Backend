@@ -32,4 +32,5 @@ urlpatterns = [
     path('api/favourite/artist/', views.GetFavoriteartistAPI.as_view(),
          name='favourite-artist-view'),  # get all user favourite artist,
      path('api/upadatedurationfromurl/', views.UpdateDurationFromUrl.as_view()),
+     path('api/recentlyplayed/', views.RecentlyPlayedAPI.as_view(), name='recently-played-view'),
 ]
