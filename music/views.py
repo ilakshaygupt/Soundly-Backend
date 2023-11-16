@@ -251,7 +251,6 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
 
         return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
 
-
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
