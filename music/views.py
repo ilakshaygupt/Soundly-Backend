@@ -234,7 +234,7 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
             playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
-        if playlist.uploader != request.user and playlist.is_private:
+        if playlist.uploader != request.user :
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         songs = playlist.songs.all()
         serializer = SongDisplaySerializer(songs, many=True)
@@ -251,12 +251,11 @@ class AddSongToPlaylistAPI(APIView):
             playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
-
         try:
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
-        if playlist.uploader != request.user and song.uploader != request.user:
+        if playlist.uploader != request.user :
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         playlist.songs.add(song)
         return Response({'message': 'Song added successfully to the playlist'}, status=status.HTTP_201_CREATED)
@@ -271,7 +270,7 @@ class AddSongToPlaylistAPI(APIView):
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
-        if playlist.uploader != request.user and song.uploader != request.user:
+        if playlist.uploader != request.user :
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         playlist.songs.remove(song)
         return Response({'message': 'Song removed from the playlist'}, status=status.HTTP_204_NO_CONTENT)
