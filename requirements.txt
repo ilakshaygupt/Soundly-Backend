@@ -60,3 +60,4 @@ virtualenv
 whitenoise
 yarl
 fuzzywuzzy
+pydub
