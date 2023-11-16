@@ -29,4 +29,5 @@ admin.site.register(Language)
 admin.site.register(Genre)
 admin.site.register(Mood)
 admin.site.register(Artist)
+admin.site.register(RecentlyPlayed)
 # pass=admin
