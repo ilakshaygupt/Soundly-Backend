@@ -238,8 +238,9 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         songs = playlist.songs.all()
         serializer = SongDisplaySerializer(songs, many=True)
+        playlist_serializer = PlaylistDisplaySerializer(playlist)
 
-        return Response({"data": serializer.data, "message": "all songs displayed"}, status=status.HTTP_200_OK)
+        return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
 
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -314,8 +315,9 @@ class PublicSongsFromPlaylistAPI(APIView):
         songs = playlist.songs.filter(is_private=False)
         serializer = SongDisplaySerializer(
             songs, many=True, context={'user': request.user})
+        playlist_serializer = PlaylistDisplaySerializer(playlist)
 
-        return Response({"data": serializer.data, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
+        return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
 
 
 class SongSearchAPI(APIView):
