@@ -111,9 +111,9 @@ class SongAPI(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, pk):
+    def patch(self, request, song_id):
         try:
-            song = Song.objects.get(id=pk)
+            song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if song.uploader != request.user:
@@ -128,10 +128,10 @@ class SongAPI(APIView):
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, pk=None):
-        if pk is not None:
+    def get(self, request, song_id=None):
+        if song_id is not None:
             try:
-                song = Song.objects.get(id=pk)
+                song = Song.objects.get(id=song_id)
                 if song.uploader != request.user:
                     return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
                 serializer = SongDisplaySerializer(song)
@@ -147,9 +147,9 @@ class SongAPI(APIView):
                 private_songs, many=True)
             return Response({"data": {"public songs": public_songs_data.data, "private songs": private_songs_data.data}, "message": "all songs"})
 
-    def delete(self, request, pk):
+    def delete(self, request, song_id):
         try:
-            song = Song.objects.get(id=pk)
+            song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if song.uploader != request.user:
@@ -177,10 +177,10 @@ class PlaylistAPI(APIView):
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, pk=None):
-        if pk:
+    def get(self, request, playlist_id=None):
+        if playlist_id:
             try:
-                playlist = Playlist.objects.get(id=pk)
+                playlist = Playlist.objects.get(id=playlist_id)
                 if playlist.uploader == request.user:
                     serializer = PlaylistDisplaySerializer(playlist)
                     return Response({"data": serializer.data, "message": "found playlist"})
@@ -196,9 +196,9 @@ class PlaylistAPI(APIView):
             serializer = PlaylistDisplaySerializer(playlists, many=True)
             return Response({"data": serializer.data, "message": "all user playlist"})
 
-    def patch(self, request, pk):
+    def patch(self, request, playlist_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -214,9 +214,9 @@ class PlaylistAPI(APIView):
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, request, playlist_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.uploader != request.user:
@@ -229,9 +229,9 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, pk):
+    def get(self, request, playlist_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.uploader != request.user and playlist.is_private:
@@ -241,19 +241,18 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
 
         return Response({"data": serializer.data, "message": "all songs displayed"}, status=status.HTTP_200_OK)
 
-
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
-    def post(self, request, pk, song_pk):
+    def post(self, request, playlist_id, song_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            song = Song.objects.get(id=song_pk)
+            song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.uploader != request.user and song.uploader != request.user:
@@ -261,14 +260,14 @@ class AddSongToPlaylistAPI(APIView):
         playlist.songs.add(song)
         return Response({'message': 'Song added successfully to the playlist'}, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, pk, song_pk):
+    def delete(self, request, playlist_id, song_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            song = Song.objects.get(id=song_pk)
+            song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.uploader != request.user and song.uploader != request.user:
@@ -303,9 +302,9 @@ class PublicSongsFromPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, pk):
+    def get(self, request, playlist_id):
         try:
-            playlist = Playlist.objects.get(pk=pk)
+            playlist = Playlist.objects.get(id=playlist_id)
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
         if playlist.is_private:
@@ -373,9 +372,9 @@ class GetSong(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request, pk):
+    def get(self, request, song_id):
         try:
-            song = Song.objects.get(pk=pk)
+            song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if song.is_private and song.uploader != request.user:
