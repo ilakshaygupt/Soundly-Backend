@@ -41,5 +41,9 @@ urlpatterns = [
 =======
          name='favourite-artist-view'),  # get all user favourite artist,
      path('api/upadatedurationfromurl/', views.UpdateDurationFromUrl.as_view()),
+<<<<<<< HEAD
 >>>>>>> c3ede44 (added song duration)
+=======
+     path('api/recentlyplayed/', views.RecentlyPlayedAPI.as_view(), name='recently-played-view'),
+>>>>>>> 1a781f9 (added recent history)
 ]
