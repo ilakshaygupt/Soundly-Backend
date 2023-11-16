@@ -102,3 +102,11 @@ class Favourite(models.Model):
         Artist, blank=True, default=None, null=True)
     def __str__(self):
         return self.user.username
+
+class RecentlyPlayed(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True,blank=True)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE,null=True,blank=True)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.song} - {self.timestamp}"
