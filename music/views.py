@@ -50,7 +50,11 @@ class SongAPI(APIView):
                     return Response({'message': 'Thumbnail file type must be png or jpeg'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> c3ede44 (added song duration)
             if 'lyrics' in request.FILES:
                 if request.FILES['lyrics'].size > 4000000:
                     return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,7 +75,11 @@ class SongAPI(APIView):
             audio_response = cloudinary.uploader.upload(
                 audio, secure=True, resource_type='video')
             audio_url = audio_response.get('url')
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> c3ede44 (added song duration)
             language_name = serializer.validated_data.pop(
                 'language_name', None)
             mood_name = serializer.validated_data.pop('mood_name', None)
@@ -513,7 +521,11 @@ class GetFavoriteartistAPI(APIView):
             else:
                 return Response({"message": "artist is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> c3ede44 (added song duration)
 
 class UpdateDurationFromUrl(APIView):
     renderer_classes = [UserRenderer]
@@ -529,8 +541,13 @@ class UpdateDurationFromUrl(APIView):
                 song.duration = duration
                 song.save()
         return Response({"message": "Duration updated successfully"}, status=status.HTTP_200_OK)
+<<<<<<< HEAD
 
     def get_audio_duration_and_format(self, audio_url):
+=======
+            
+    def get_audio_duration_and_format(self,audio_url):
+>>>>>>> c3ede44 (added song duration)
         try:
             response = requests.get(audio_url)
             audio_data = response.content
@@ -547,6 +564,7 @@ class UpdateDurationFromUrl(APIView):
         except Exception as e:
             print(f"Error getting duration for {audio_url}: {str(e)}")
             return None
+<<<<<<< HEAD
 
 
 class AllArtistsAPI(APIView):  # display all artists
@@ -647,3 +665,5 @@ class GetFavoriteLanguageAPI(APIView):
 
             return Response({"message": "Languages added to favorites"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+=======
+>>>>>>> c3ede44 (added song duration)

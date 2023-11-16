@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/favourite/songs/', views.GetFavoriteSongsAPI.as_view(),
          name='favourite-songs-view'),  # get all user favourite songs
     path('api/favourite/artist/', views.GetFavoriteartistAPI.as_view(),
+<<<<<<< HEAD
          name='favourite-artist-view'),  # get  and add all user favourite artist,
      path('api/upadatedurationfromurl/', views.UpdateDurationFromUrl.as_view()),
      path('api/recentlyplayed/', views.RecentlyPlayedAPI.as_view(), name='recently-played-view'),
@@ -37,4 +38,8 @@ urlpatterns = [
      path('api/artist/<int:artist_id>/', views.ArtistAPI.as_view(), name='artist-view'),
      path('api/foryou/', views.ForYouAPI.as_view(), name='for-you-view'),
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
+=======
+         name='favourite-artist-view'),  # get all user favourite artist,
+     path('api/upadatedurationfromurl/', views.UpdateDurationFromUrl.as_view()),
+>>>>>>> c3ede44 (added song duration)
 ]

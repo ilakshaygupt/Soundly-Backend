@@ -3,8 +3,14 @@ import io
 import requests
 from cloudinary.models import CloudinaryField
 from django.db import models
+<<<<<<< HEAD
 from pydub import AudioSegment
 
+=======
+import requests
+from pydub import AudioSegment
+import io
+>>>>>>> c3ede44 (added song duration)
 from accounts.models import MyUser
 
 
