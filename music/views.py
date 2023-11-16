@@ -249,7 +249,11 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
         serializer = SongDisplaySerializer(songs, many=True)
         playlist_serializer = PlaylistDisplaySerializer(playlist)
 
+<<<<<<< HEAD
         return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
+=======
+        return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
+>>>>>>> e40fd59 (display playlist data in all sogns from playlist api)
 
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -325,7 +329,11 @@ class PublicSongsFromPlaylistAPI(APIView):
             songs, many=True, context={'user': request.user})
         playlist_serializer = PlaylistDisplaySerializer(playlist)
 
+<<<<<<< HEAD
         return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
+=======
+        return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
+>>>>>>> e40fd59 (display playlist data in all sogns from playlist api)
 
 
 class SongSearchAPI(APIView):
