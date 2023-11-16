@@ -1,6 +1,8 @@
 from cloudinary.models import CloudinaryField
 from django.db import models
-
+import requests
+from pydub import AudioSegment
+import io
 from accounts.models import MyUser
 
 
@@ -49,7 +51,26 @@ class Song(models.Model):
     thumbnail_url = models.URLField(blank=True, null=True, default=None)
     is_private = models.BooleanField(default=False)
     lyrics_url = models.URLField(blank=True, null=True, default=None)
+    song_duration = models.CharField(max_length=10, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.song_url:
+            duration = self.get_audio_duration_from_url(self.song_url)
+            self.song_duration = self.convert_seconds_to_minutes(duration)
+
+        super().save(*args, **kwargs)
+
+    def get_audio_duration_from_url(self, audio_url):
+        response = requests.get(audio_url)
+        audio_data = response.content
+        audio = AudioSegment.from_file(io.BytesIO(audio_data))
+        duration_in_seconds = len(audio) / 1000.0
+        return duration_in_seconds
+
+    def convert_seconds_to_minutes(self, seconds):
+        minutes = int(seconds // 60)
+        seconds = int(seconds % 60)
+        return f"{minutes:02d}:{seconds:02d}"
     def __str__(self):
         return self.name
 
