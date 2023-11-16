@@ -30,13 +30,14 @@ class SongAPI(APIView):
         serializer = SongCreateSerializer(data=request.data)
         if serializer.is_valid():
             uploader = request.user
+            lyrics_url = None
             if uploader.is_uploader == False:
                 return Response({'message': 'Only uploaders can add songs'}, status=status.HTTP_403_FORBIDDEN)
             audio_url = None
             if 'audio' in request.FILES:
                 if request.FILES['audio'].size > 7000000:
                     return Response({'message': 'Audio file size must be less than 7MB'}, status=status.HTTP_400_BAD_REQUEST)
-                if request.FILES['audio'].content_type != 'audio/mp3':
+                if request.FILES['audio'].content_type != 'audio/mpeg':
                     return Response({'message': 'Audio file type must be mp3'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Audio file is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -48,11 +49,19 @@ class SongAPI(APIView):
                     return Response({'message': 'Thumbnail file type must be png or jpeg'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
             if 'lyrics' in request.FILES:
                 if request.FILES['lyrics'].size > 4000000:
                     return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
                 if not re.search(r'\.srt$', request.FILES['lyrics'].name, re.IGNORECASE):
                     return Response({'message': 'Lyrics file type must be srt'}, status=status.HTTP_400_BAD_REQUEST)
+                lyrics = request.FILES['lyrics']
+                lyrics_response = cloudinary.uploader.upload(
+                    lyrics, secure=True, resource_type='raw')
+                lyrics_url = lyrics_response.get('url')
+            else:
+                lyrics_url = None
+
             thumbnail = request.FILES['thumbnail']
             thumbnail_response = cloudinary.uploader.upload(
                 thumbnail, secure=True)
@@ -61,10 +70,7 @@ class SongAPI(APIView):
             audio_response = cloudinary.uploader.upload(
                 audio, secure=True, resource_type='video')
             audio_url = audio_response.get('url')
-            lyrics = request.FILES['lyrics']
-            lyrics_response = cloudinary.uploader.upload(
-                lyrics, secure=True, resource_type='raw')
-            lyrics_url = lyrics_response.get('url')
+            
             language_name = serializer.validated_data.pop(
                 'language_name', None)
             mood_name = serializer.validated_data.pop('mood_name', None)
@@ -112,18 +118,6 @@ class SongAPI(APIView):
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
         if song.uploader != request.user:
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
-        if 'lyrics' in request.FILES:
-            if request.FILES['lyrics'].size > 4000000:
-                return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
-            if not re.search(r'\.srt$', request.FILES['lyrics'].name, re.IGNORECASE):
-                return Response({'message': 'Lyrics file type must be srt'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'message': 'Lyrics is required'}, status=status.HTTP_400_BAD_REQUEST)
-        lyrics = request.FILES['lyrics']
-        lyrics_response = cloudinary.uploader.upload(
-            lyrics, secure=True, resource_type='raw')
-        lyrics_url = lyrics_response.get('url')
-        song.lyrics_url = lyrics_url
         serializer = ChangeSongSerializer(
             song, data=request.data, partial=True)
         if serializer.is_valid():
@@ -476,3 +470,36 @@ class GetFavoriteartistAPI(APIView):
                 return Response({"message": "artist is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         
+
+class UpdateDurationFromUrl(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def patch(self, request):
+        songs = Song.objects.all()
+
+        for song in songs:
+            audio_url = song.song_url
+            duration = self.get_audio_duration_and_format(audio_url)
+            if duration is not None:
+                song.duration = duration
+                song.save()
+        return Response({"message": "Duration updated successfully"}, status=status.HTTP_200_OK)
+            
+    def get_audio_duration_and_format(self,audio_url):
+        try:
+            response = requests.get(audio_url)
+            audio_data = response.content
+
+            audio = AudioSegment.from_file(io.BytesIO(audio_data))
+
+            duration_in_seconds = len(audio) / 1000.0
+
+            minutes = int(duration_in_seconds // 60)
+            seconds = int(duration_in_seconds % 60)
+            formatted_duration = f"{minutes:02d}:{seconds:02d}"
+
+            return formatted_duration
+        except Exception as e:
+            print(f"Error getting duration for {audio_url}: {str(e)}")
+            return None
