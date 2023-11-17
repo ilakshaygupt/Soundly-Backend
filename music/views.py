@@ -527,3 +527,55 @@ class UpdateDurationFromUrl(APIView):
             print(f"Error getting duration for {audio_url}: {str(e)}")
             return None
 
+class AllArtistsAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        artists = Artist.objects.all()
+        serializer = artistSerializer(artists, many=True)
+        return Response({"data": serializer.data, "message": "artists found"}, status=status.HTTP_200_OK)
+    
+class ArtistAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, artist_id):
+        try:
+            artist = Artist.objects.get(id=artist_id)
+        except Artist.DoesNotExist:
+            return Response({'message': 'Artist not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = artistSerializer(artist)
+        songs = Song.objects.filter(artist=artist)
+        song_serializer = SongDisplaySerializer(songs, many=True)
+        return Response({"data":{"artist": serializer.data,"songs":song_serializer.data}, "message": "artist found"}, status=status.HTTP_200_OK)
+class ForYouAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+    def get(self, request):
+        user = request.user
+
+        try:
+            favourite = Favourite.objects.get(user=user)
+            
+        except Favourite.DoesNotExist:
+            favourite = []
+        recently_played_songs = RecentlyPlayed.objects.filter(user=user)
+        combined_songs = Song.objects.none()
+        characteristic_query_fav = Q()
+        for song in favourite.song.all():
+            characteristic_query_fav |= Q(artist=song.artist) & Q(genre=song.genre) & Q(mood=song.mood)
+        similar_songs_from_favs = Song.objects.filter(characteristic_query_fav)
+        
+        combined_songs |= similar_songs_from_favs
+        characteristic_query_recent = Q()
+        for recently_played in recently_played_songs:
+            song = recently_played.song
+            characteristic_query_recent |= Q(artist=song.artist) & Q(genre=song.genre) & Q(mood=song.mood)
+        similar_songs_from_recent = Song.objects.filter(characteristic_query_recent)
+        
+        combined_songs |= similar_songs_from_recent
+        if combined_songs.count() == 0:
+            combined_songs = Song.objects.all()[:6]
+        serializer = SongDisplaySerializer(combined_songs, many=True, context={'user': user})
+        return Response({"data": serializer.data, "message": "Similar songs found"}, status=status.HTTP_200_OK)
