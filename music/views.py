@@ -612,8 +612,12 @@ class UpdateDurationFromUrl(APIView):
 <<<<<<< HEAD
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 
 class AllArtistsAPI(APIView):  # display all artists
+=======
+class AllArtistsAPI(APIView):
+>>>>>>> faaf8bb (added for you api)
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
@@ -621,9 +625,14 @@ class AllArtistsAPI(APIView):  # display all artists
         artists = Artist.objects.all()
         serializer = artistSerializer(artists, many=True)
         return Response({"data": serializer.data, "message": "artists found"}, status=status.HTTP_200_OK)
+<<<<<<< HEAD
 
 
 class ArtistAPI(APIView):  # display all songs from an artist
+=======
+    
+class ArtistAPI(APIView):
+>>>>>>> faaf8bb (added for you api)
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
@@ -635,6 +644,7 @@ class ArtistAPI(APIView):  # display all songs from an artist
         serializer = artistSerializer(artist)
         songs = Song.objects.filter(artist=artist)
         song_serializer = SongDisplaySerializer(songs, many=True)
+<<<<<<< HEAD
         return Response({"data": {"artist": serializer.data, "songs": song_serializer.data}, "message": "artist found"}, status=status.HTTP_200_OK)
 
 
@@ -642,26 +652,43 @@ class ForYouAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
+=======
+        return Response({"data":{"artist": serializer.data,"songs":song_serializer.data}, "message": "artist found"}, status=status.HTTP_200_OK)
+class ForYouAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+>>>>>>> faaf8bb (added for you api)
     def get(self, request):
         user = request.user
 
         try:
             favourite = Favourite.objects.get(user=user)
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> faaf8bb (added for you api)
         except Favourite.DoesNotExist:
             favourite = []
         recently_played_songs = RecentlyPlayed.objects.filter(user=user)
         combined_songs = Song.objects.none()
         characteristic_query_fav = Q()
         for song in favourite.song.all():
+<<<<<<< HEAD
             characteristic_query_fav |= Q(artist=song.artist) & Q(
                 genre=song.genre) & Q(mood=song.mood)
         similar_songs_from_favs = Song.objects.filter(characteristic_query_fav)
 
+=======
+            characteristic_query_fav |= Q(artist=song.artist) & Q(genre=song.genre) & Q(mood=song.mood)
+        similar_songs_from_favs = Song.objects.filter(characteristic_query_fav)
+        
+>>>>>>> faaf8bb (added for you api)
         combined_songs |= similar_songs_from_favs
         characteristic_query_recent = Q()
         for recently_played in recently_played_songs:
             song = recently_played.song
+<<<<<<< HEAD
             characteristic_query_recent |= Q(artist=song.artist) & Q(
                 genre=song.genre) & Q(mood=song.mood)
         similar_songs_from_recent = Song.objects.filter(
@@ -716,3 +743,13 @@ class GetFavoriteLanguageAPI(APIView):
 =======
 
 >>>>>>> 1a781f9 (added recent history)
+=======
+            characteristic_query_recent |= Q(artist=song.artist) & Q(genre=song.genre) & Q(mood=song.mood)
+        similar_songs_from_recent = Song.objects.filter(characteristic_query_recent)
+        
+        combined_songs |= similar_songs_from_recent
+        if combined_songs.count() == 0:
+            combined_songs = Song.objects.all()[:6]
+        serializer = SongDisplaySerializer(combined_songs, many=True, context={'user': user})
+        return Response({"data": serializer.data, "message": "Similar songs found"}, status=status.HTTP_200_OK)
+>>>>>>> faaf8bb (added for you api)

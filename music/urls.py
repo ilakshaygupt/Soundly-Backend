@@ -37,6 +37,7 @@ urlpatterns = [
      path('api/allartists/', views.AllArtistsAPI.as_view(), name='all-artists-view'),
      path('api/artist/<int:artist_id>/', views.ArtistAPI.as_view(), name='artist-view'),
      path('api/foryou/', views.ForYouAPI.as_view(), name='for-you-view'),
+<<<<<<< HEAD
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
 =======
          name='favourite-artist-view'),  # get all user favourite artist,
@@ -46,4 +47,6 @@ urlpatterns = [
 =======
      path('api/recentlyplayed/', views.RecentlyPlayedAPI.as_view(), name='recently-played-view'),
 >>>>>>> 1a781f9 (added recent history)
+=======
+>>>>>>> faaf8bb (added for you api)
 ]
