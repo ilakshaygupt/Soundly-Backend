@@ -140,6 +140,9 @@ class AddFavArtists(serializers.ModelSerializer):
         if not all(isinstance(item, str) for item in value):
             raise serializers.ValidationError("Please enter a valid artist name")
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d2f9838 (added fav language api)
         return value
     
 class LanguageSerializer(serializers.ModelSerializer):
@@ -167,6 +170,9 @@ class AddFavLanguages(serializers.ModelSerializer):
             raise serializers.ValidationError("Please enter a valid language name")
         return value
     
+<<<<<<< HEAD
 =======
         return value
 >>>>>>> 5ed69a6 (modifies fav artist api)
+=======
+>>>>>>> d2f9838 (added fav language api)

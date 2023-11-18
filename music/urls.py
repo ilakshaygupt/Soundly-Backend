@@ -42,6 +42,7 @@ urlpatterns = [
      path('api/foryou/', views.ForYouAPI.as_view(), name='for-you-view'),
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
 =======
          name='favourite-artist-view'),  # get all user favourite artist,
@@ -56,4 +57,7 @@ urlpatterns = [
 =======
      # paht('api')
 >>>>>>> 5ed69a6 (modifies fav artist api)
+=======
+     path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
+>>>>>>> d2f9838 (added fav language api)
 ]

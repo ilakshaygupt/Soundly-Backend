@@ -829,6 +829,7 @@ class GetFavoriteLanguageAPI(APIView):
                     favourite.language.add(language)
 
             return Response({"message": "Languages added to favorites"}, status=status.HTTP_200_OK)
+<<<<<<< HEAD
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 =======
 >>>>>>> c3ede44 (added song duration)
@@ -848,3 +849,6 @@ class GetFavoriteLanguageAPI(APIView):
             combined_songs, many=True, context={'user': user})
         return Response({"data": serializer.data, "message": "Similar songs found"}, status=status.HTTP_200_OK)
 >>>>>>> faaf8bb (added for you api)
+=======
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+>>>>>>> d2f9838 (added fav language api)
