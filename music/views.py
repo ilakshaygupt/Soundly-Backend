@@ -51,10 +51,14 @@ class SongAPI(APIView):
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
             
 >>>>>>> c3ede44 (added song duration)
+=======
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
             if 'lyrics' in request.FILES:
                 if request.FILES['lyrics'].size > 4000000:
                     return Response({'message': 'Lyrics file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
@@ -76,10 +80,14 @@ class SongAPI(APIView):
                 audio, secure=True, resource_type='video')
             audio_url = audio_response.get('url')
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
             
 >>>>>>> c3ede44 (added song duration)
+=======
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
             language_name = serializer.validated_data.pop(
                 'language_name', None)
             mood_name = serializer.validated_data.pop('mood_name', None)
@@ -244,20 +252,29 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
         except Playlist.DoesNotExist:
             return Response({'message': 'Playlist not found'}, status=status.HTTP_404_NOT_FOUND)
 <<<<<<< HEAD
+<<<<<<< HEAD
         if playlist.uploader != request.user:
 =======
         if playlist.uploader != request.user :
 >>>>>>> e1ec07f (bug fixes)
+=======
+        if playlist.uploader != request.user:
+>>>>>>> 5ed69a6 (modifies fav artist api)
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         songs = playlist.songs.all()
         serializer = SongDisplaySerializer(songs, many=True)
         playlist_serializer = PlaylistDisplaySerializer(playlist)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
 =======
         return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
 >>>>>>> e40fd59 (display playlist data in all sogns from playlist api)
+=======
+        return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all songs displayed"}, status=status.HTTP_200_OK)
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
 
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -273,10 +290,14 @@ class AddSongToPlaylistAPI(APIView):
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
 <<<<<<< HEAD
+<<<<<<< HEAD
         if playlist.uploader != request.user:
 =======
         if playlist.uploader != request.user :
 >>>>>>> e1ec07f (bug fixes)
+=======
+        if playlist.uploader != request.user:
+>>>>>>> 5ed69a6 (modifies fav artist api)
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         playlist.songs.add(song)
         return Response({'message': 'Song added successfully to the playlist'}, status=status.HTTP_201_CREATED)
@@ -292,10 +313,14 @@ class AddSongToPlaylistAPI(APIView):
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
 <<<<<<< HEAD
+<<<<<<< HEAD
         if playlist.uploader != request.user:
 =======
         if playlist.uploader != request.user :
 >>>>>>> e1ec07f (bug fixes)
+=======
+        if playlist.uploader != request.user:
+>>>>>>> 5ed69a6 (modifies fav artist api)
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         playlist.songs.remove(song)
         return Response({'message': 'Song removed from the playlist'}, status=status.HTTP_204_NO_CONTENT)
@@ -342,10 +367,14 @@ class PublicSongsFromPlaylistAPI(APIView):
         playlist_serializer = PlaylistDisplaySerializer(playlist)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
 =======
         return Response({"data": {"playlist": playlist_serializer.data,"songs":serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
 >>>>>>> e40fd59 (display playlist data in all sogns from playlist api)
+=======
+        return Response({"data": {"playlist": playlist_serializer.data, "songs": serializer.data}, "message": "all public songs from playlist displayed"}, status=status.HTTP_200_OK)
+>>>>>>> 5ed69a6 (modifies fav artist api)
 
 
 class SongSearchAPI(APIView):
@@ -408,15 +437,20 @@ class GetSong(APIView):
         except Song.DoesNotExist:
             return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
             
 >>>>>>> 1a781f9 (added recent history)
+=======
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
         if song.is_private and song.uploader != request.user:
             return Response({'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
         else:
             serializer = SongSerializer(song, context={'user': request.user})
             try:
+<<<<<<< HEAD
 <<<<<<< HEAD
                 recently_played = RecentlyPlayed.objects.get(
                     user=request.user, song=song)
@@ -430,25 +464,18 @@ class GetSong(APIView):
             except RecentlyPlayed.DoesNotExist:
                 recently_played = RecentlyPlayed.objects.create(user=request.user,song=song)
 >>>>>>> 1a781f9 (added recent history)
+=======
+                recently_played = RecentlyPlayed.objects.get(
+                    user=request.user, song=song)
+                recently_played.save()
+            except RecentlyPlayed.DoesNotExist:
+                recently_played = RecentlyPlayed.objects.create(
+                    user=request.user, song=song)
+>>>>>>> 5ed69a6 (modifies fav artist api)
                 recently_played.save()
 
             return Response({"data": serializer.data, "message": "Song found"}, status=status.HTTP_200_OK)
 
-class RecentlyPlayedAPI(APIView):
-    renderer_classes = [UserRenderer]
-    authentication_classes = [JWTAuthentication]
-
-    def get(self, request):
-        try:
-            recently_played = RecentlyPlayed.objects.filter(user=request.user)
-            if recently_played.count() == 0:
-                return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
-        except RecentlyPlayed.DoesNotExist :
-            return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
-        songs = Song.objects.filter(recentlyplayed__in=recently_played).order_by('-recentlyplayed__timestamp')[:6]
-        serializer = SongDisplaySerializer(
-            songs, many=True, context={'user': request.user})
-        return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
 
 class RecentlyPlayedAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -467,6 +494,26 @@ class RecentlyPlayedAPI(APIView):
             songs, many=True, context={'user': request.user})
         return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
 
+<<<<<<< HEAD
+class RecentlyPlayedAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        try:
+            recently_played = RecentlyPlayed.objects.filter(user=request.user)
+            if recently_played.count() == 0:
+                return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
+        except RecentlyPlayed.DoesNotExist:
+            return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
+        songs = Song.objects.filter(recentlyplayed__in=recently_played).order_by(
+            '-recentlyplayed__timestamp')[:6]
+        serializer = SongDisplaySerializer(
+            songs, many=True, context={'user': request.user})
+        return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
+
+=======
+>>>>>>> 5ed69a6 (modifies fav artist api)
 
 class FavouriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
@@ -567,10 +614,14 @@ class GetFavoriteartistAPI(APIView):
                 return Response({"message": "artist is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
         
 >>>>>>> c3ede44 (added song duration)
+=======
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
 
 class UpdateDurationFromUrl(APIView):
     renderer_classes = [UserRenderer]
@@ -587,12 +638,17 @@ class UpdateDurationFromUrl(APIView):
                 song.save()
         return Response({"message": "Duration updated successfully"}, status=status.HTTP_200_OK)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     def get_audio_duration_and_format(self, audio_url):
 =======
             
     def get_audio_duration_and_format(self,audio_url):
 >>>>>>> c3ede44 (added song duration)
+=======
+
+    def get_audio_duration_and_format(self, audio_url):
+>>>>>>> 5ed69a6 (modifies fav artist api)
         try:
             response = requests.get(audio_url)
             audio_data = response.content
@@ -613,11 +669,16 @@ class UpdateDurationFromUrl(APIView):
 <<<<<<< HEAD
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 class AllArtistsAPI(APIView):  # display all artists
 =======
 class AllArtistsAPI(APIView):
 >>>>>>> faaf8bb (added for you api)
+=======
+
+class AllArtistsAPI(APIView):  # display all artists
+>>>>>>> 5ed69a6 (modifies fav artist api)
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
@@ -626,6 +687,7 @@ class AllArtistsAPI(APIView):
         serializer = artistSerializer(artists, many=True)
         return Response({"data": serializer.data, "message": "artists found"}, status=status.HTTP_200_OK)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 class ArtistAPI(APIView):  # display all songs from an artist
@@ -633,6 +695,11 @@ class ArtistAPI(APIView):  # display all songs from an artist
     
 class ArtistAPI(APIView):
 >>>>>>> faaf8bb (added for you api)
+=======
+
+
+class ArtistAPI(APIView):  # display all songs from an artist
+>>>>>>> 5ed69a6 (modifies fav artist api)
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
@@ -644,6 +711,7 @@ class ArtistAPI(APIView):
         serializer = artistSerializer(artist)
         songs = Song.objects.filter(artist=artist)
         song_serializer = SongDisplaySerializer(songs, many=True)
+<<<<<<< HEAD
 <<<<<<< HEAD
         return Response({"data": {"artist": serializer.data, "songs": song_serializer.data}, "message": "artist found"}, status=status.HTTP_200_OK)
 
@@ -658,22 +726,36 @@ class ForYouAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 >>>>>>> faaf8bb (added for you api)
+=======
+        return Response({"data": {"artist": serializer.data, "songs": song_serializer.data}, "message": "artist found"}, status=status.HTTP_200_OK)
+
+
+class ForYouAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
     def get(self, request):
         user = request.user
 
         try:
             favourite = Favourite.objects.get(user=user)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
             
 >>>>>>> faaf8bb (added for you api)
+=======
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
         except Favourite.DoesNotExist:
             favourite = []
         recently_played_songs = RecentlyPlayed.objects.filter(user=user)
         combined_songs = Song.objects.none()
         characteristic_query_fav = Q()
         for song in favourite.song.all():
+<<<<<<< HEAD
 <<<<<<< HEAD
             characteristic_query_fav |= Q(artist=song.artist) & Q(
                 genre=song.genre) & Q(mood=song.mood)
@@ -684,16 +766,26 @@ class ForYouAPI(APIView):
         similar_songs_from_favs = Song.objects.filter(characteristic_query_fav)
         
 >>>>>>> faaf8bb (added for you api)
+=======
+            characteristic_query_fav |= Q(artist=song.artist) & Q(
+                genre=song.genre) & Q(mood=song.mood)
+        similar_songs_from_favs = Song.objects.filter(characteristic_query_fav)
+
+>>>>>>> 5ed69a6 (modifies fav artist api)
         combined_songs |= similar_songs_from_favs
         characteristic_query_recent = Q()
         for recently_played in recently_played_songs:
             song = recently_played.song
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5ed69a6 (modifies fav artist api)
             characteristic_query_recent |= Q(artist=song.artist) & Q(
                 genre=song.genre) & Q(mood=song.mood)
         similar_songs_from_recent = Song.objects.filter(
             characteristic_query_recent)
 
+<<<<<<< HEAD
         combined_songs |= similar_songs_from_recent
         if combined_songs.count() == 0:
             combined_songs = Song.objects.all()
@@ -747,9 +839,12 @@ class GetFavoriteLanguageAPI(APIView):
             characteristic_query_recent |= Q(artist=song.artist) & Q(genre=song.genre) & Q(mood=song.mood)
         similar_songs_from_recent = Song.objects.filter(characteristic_query_recent)
         
+=======
+>>>>>>> 5ed69a6 (modifies fav artist api)
         combined_songs |= similar_songs_from_recent
         if combined_songs.count() == 0:
-            combined_songs = Song.objects.all()[:6]
-        serializer = SongDisplaySerializer(combined_songs, many=True, context={'user': user})
+            combined_songs = Song.objects.all()
+        serializer = SongDisplaySerializer(
+            combined_songs, many=True, context={'user': user})
         return Response({"data": serializer.data, "message": "Similar songs found"}, status=status.HTTP_200_OK)
 >>>>>>> faaf8bb (added for you api)

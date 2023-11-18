@@ -31,12 +31,16 @@ urlpatterns = [
          name='favourite-songs-view'),  # get all user favourite songs
     path('api/favourite/artist/', views.GetFavoriteartistAPI.as_view(),
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5ed69a6 (modifies fav artist api)
          name='favourite-artist-view'),  # get  and add all user favourite artist,
      path('api/upadatedurationfromurl/', views.UpdateDurationFromUrl.as_view()),
      path('api/recentlyplayed/', views.RecentlyPlayedAPI.as_view(), name='recently-played-view'),
      path('api/allartists/', views.AllArtistsAPI.as_view(), name='all-artists-view'),
      path('api/artist/<int:artist_id>/', views.ArtistAPI.as_view(), name='artist-view'),
      path('api/foryou/', views.ForYouAPI.as_view(), name='for-you-view'),
+<<<<<<< HEAD
 <<<<<<< HEAD
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
 =======
@@ -49,4 +53,7 @@ urlpatterns = [
 >>>>>>> 1a781f9 (added recent history)
 =======
 >>>>>>> faaf8bb (added for you api)
+=======
+     # paht('api')
+>>>>>>> 5ed69a6 (modifies fav artist api)
 ]
