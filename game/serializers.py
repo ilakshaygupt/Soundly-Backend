@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Game
+from .models import *
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -8,9 +8,10 @@ class GameSerializer(serializers.ModelSerializer):
     correct_answer = serializers.CharField(max_length=100)
     option1 = serializers.CharField(max_length=100)
     option2 = serializers.CharField(max_length=100)
+    audio_1 = serializers.URLField(max_length=200)
     class Meta:
         model = Game
-        fields = ['name', 'correct_answer', 'option1', 'option2']
+        fields = ['id','name', 'correct_answer', 'option1', 'option2', 'audio_1']
 
 
 class GameDisplaySerializer(serializers.ModelSerializer):
@@ -28,3 +29,8 @@ class CheckAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['answer']
+
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = ['user', 'score']

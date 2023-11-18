@@ -1,8 +1,10 @@
+import io
+
+import requests
 from cloudinary.models import CloudinaryField
 from django.db import models
-import requests
 from pydub import AudioSegment
-import io
+
 from accounts.models import MyUser
 
 

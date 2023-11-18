@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Playlist, Song ,Favourite
+from .models import Favourite, Playlist, Song
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -124,4 +124,45 @@ class artistSerializer(serializers.ModelSerializer):
         model = Song
         fields = ['id', 'name','thumbnail_url']
 
-        
+class AddFavArtists(serializers.ModelSerializer):
+    artist_names = serializers.ListField(child = serializers.CharField())
+    class Meta:
+        model = Favourite
+        fields = ['artist_names']
+    def validate(self, data):
+        if len(data['artist_names']) == 0:
+            raise serializers.ValidationError("Please enter atleast one artist name")
+        return data
+    def validate_artist_names(self, value):
+        for name in value:
+            if len(name) == 0:
+                raise serializers.ValidationError("Please enter a valid artist name")
+        if not all(isinstance(item, str) for item in value):
+            raise serializers.ValidationError("Please enter a valid artist name")
+        return value
+    
+class LanguageSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, error_messages={
+                                 'required': 'Please enter a name'})
+   
+    class Meta:
+        model = Song
+        fields = ['id', 'name']
+
+class AddFavLanguages(serializers.ModelSerializer):
+    language_names = serializers.ListField(child = serializers.CharField())
+    class Meta:
+        model = Favourite
+        fields = ['language_names']
+    def validate(self, data):
+        if len(data['language_names']) == 0:
+            raise serializers.ValidationError("Please enter atleast one language name")
+        return data
+    def validate_language_names(self, value):
+        for name in value:
+            if len(name) == 0:
+                raise serializers.ValidationError("Please enter a valid language name")
+        if not all(isinstance(item, str) for item in value):
+            raise serializers.ValidationError("Please enter a valid language name")
+        return value
+    
