@@ -124,4 +124,19 @@ class artistSerializer(serializers.ModelSerializer):
         model = Song
         fields = ['id', 'name','thumbnail_url']
 
-        
+class AddFavArtists(serializers.ModelSerializer):
+    artist_names = serializers.ListField(child = serializers.CharField())
+    class Meta:
+        model = Favourite
+        fields = ['artist_names']
+    def validate(self, data):
+        if len(data['artist_names']) == 0:
+            raise serializers.ValidationError("Please enter atleast one artist name")
+        return data
+    def validate_artist_names(self, value):
+        for name in value:
+            if len(name) == 0:
+                raise serializers.ValidationError("Please enter a valid artist name")
+        if not all(isinstance(item, str) for item in value):
+            raise serializers.ValidationError("Please enter a valid artist name")
+        return value
