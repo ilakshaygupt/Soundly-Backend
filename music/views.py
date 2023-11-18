@@ -608,3 +608,41 @@ class ForYouAPI(APIView):
         serializer = SongDisplaySerializer(
             combined_songs, many=True, context={'user': user})
         return Response({"data": serializer.data, "message": "Similar songs found"}, status=status.HTTP_200_OK)
+
+class GetFavoriteLanguageAPI(APIView):
+    renderer_classes = [UserRenderer]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        user = request.user
+        favourite = Favourite.objects.get(user=user)
+        languages = favourite.language.all()
+        serializer = LanguageSerializer(languages, many=True)
+        return Response({"data": serializer.data, "message": "languages found"}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = request.user
+        serializer = AddFavLanguages(data=request.data)
+
+        if serializer.is_valid():
+            language_names = serializer.validated_data.get('language_names', [])
+            
+            if not language_names:
+                return Response({"message": "At least one language name is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                favourite = Favourite.objects.get(user=user)
+            except Favourite.DoesNotExist:
+                return Response({"message": "User does not have a favourite object"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            for language_name in language_names:
+                try:
+                    language = Language.objects.get(name=language_name)
+                except Language.DoesNotExist:
+                    language = Language.objects.create(name=language_name)
+
+                if not favourite.language.filter(name=language_name).exists():
+                    favourite.language.add(language)
+
+            return Response({"message": "Languages added to favorites"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
