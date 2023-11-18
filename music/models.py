@@ -4,6 +4,7 @@ import requests
 from cloudinary.models import CloudinaryField
 from django.db import models
 <<<<<<< HEAD
+<<<<<<< HEAD
 from pydub import AudioSegment
 
 =======
@@ -11,6 +12,10 @@ import requests
 from pydub import AudioSegment
 import io
 >>>>>>> c3ede44 (added song duration)
+=======
+from pydub import AudioSegment
+
+>>>>>>> 3a76fbe (changed game api)
 from accounts.models import MyUser
 
 
