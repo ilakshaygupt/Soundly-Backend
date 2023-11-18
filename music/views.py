@@ -614,6 +614,7 @@ class GetFavoriteLanguageAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 
+
     def get(self, request):
         user = request.user
         favourite = Favourite.objects.get(user=user)
