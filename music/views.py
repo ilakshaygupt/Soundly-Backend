@@ -113,6 +113,9 @@ class SongAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, song_id):
+        uploader = request.user
+        if uploader.is_uploader == False:
+                return Response({'message': 'Only uploaders can add songs'}, status=status.HTTP_403_FORBIDDEN)
         try:
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
@@ -130,6 +133,9 @@ class SongAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, song_id=None):
+        uploader = request.user
+        if uploader.is_uploader == False:
+                return Response({'message': 'Only uploaders can add songs'}, status=status.HTTP_403_FORBIDDEN)
         if song_id is not None:
             try:
                 song = Song.objects.get(id=song_id)
@@ -149,6 +155,9 @@ class SongAPI(APIView):
             return Response({"data": {"public songs": public_songs_data.data, "private songs": private_songs_data.data}, "message": "all songs"})
 
     def delete(self, request, song_id):
+        uploader = request.user
+        if uploader.is_uploader == False:
+                return Response({'message': 'Only uploaders can add songs'}, status=status.HTTP_403_FORBIDDEN)
         try:
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
