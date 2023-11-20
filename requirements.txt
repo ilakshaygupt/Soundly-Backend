@@ -61,3 +61,4 @@ whitenoise
 yarl
 fuzzywuzzy
 pydub
+dj_database_url
