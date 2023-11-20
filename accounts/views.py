@@ -24,30 +24,9 @@ class UserRegistrationEmailView(APIView):
 
         serializer = UserRegistrationEmailSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get('username').lower()
-
-            email = serializer.validated_data.get('email').lower()
-
-            try:
-                user = MyUser.objects.get(username=username)
-                if user and user.is_valid:
-                    return Response({"errors": "User with this username already exists"}, status=status.HTTP_400_BAD_REQUEST)
-                elif user and not user.is_valid:
-                    user.delete()
-            except:
-                user = None
-            try:
-                user_email = MyUser.objects.get(email=email)
-                if user_email and user_email.is_valid:
-                    return Response({"errors": "User with this email already exists"}, status=status.HTTP_400_BAD_REQUEST)
-                elif user_email and not user_email.is_valid:
-                    user_email.delete()
-            except:
-                user_email = None
             newuser = serializer.create(serializer.validated_data)
             send_otp_via_email(newuser.email)
             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -57,32 +36,9 @@ class UserRegistrationPhoneView(APIView):
     def post(self, request):
         serializer = UserRegistrationPhoneSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get('username').lower()
-            phone_number = serializer.validated_data.get(
-                'phone_number').lower()
-
-            try:
-                user = MyUser.objects.get(username=username)
-                if user and user.is_valid:
-                    return Response({"errors": "User with this username already exists"}, status=status.HTTP_400_BAD_REQUEST)
-                elif user and not user.is_valid:
-                    user.delete()
-            except:
-                user = None
-
-            try:
-                user_phone = MyUser.objects.get(phone_number=phone_number)
-                if user_phone and user_phone.is_valid:
-                    return Response({"errors": "User with this phone number already exists"}, status=status.HTTP_400_BAD_REQUEST)
-                elif user_phone and not user_phone.is_valid:
-                    user_phone.delete()
-            except:
-                user_phone = None
-
-            newuser = serializer.create_phone_user(
-                {"username": username, "phone_number": phone_number})
+            newuser = serializer.create(serializer.validated_data)
             otp = generate_otp()
-            send_otp_via_sms(phone_number, otp)
+            send_otp_via_sms(newuser.phone_number, otp)
             newuser.otp = otp
             newuser.save()
             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
@@ -97,18 +53,8 @@ class ForgotEmail(APIView):
     def post(self, request):
         serializer = ForgotEmailSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data.get('email').lower()
-            try:
-                # use = MyUser.objects.filter(email=email).first()
-                user = MyUser.objects.get(email=email)
-                if not user.is_valid:
-                    return Response({"errors": "User is not valid"}, status=status.HTTP_400_BAD_REQUEST)
-                send_otp_via_email(email)
-                user_obj = MyUser.objects.get(email=email)
-                user_obj = user_obj.username
-                return Response({"message": "OTP sent to registered Email", "data": user_obj}, status=status.HTTP_200_OK)
-            except:
-                return Response({"errors": "User with this email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            user = serializer.send_email(serializer.validated_data)
+            return Response({"message": "OTP sent to registered Email", "data": user}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -119,48 +65,23 @@ class ForgotPhone(APIView):
     def post(self, request):
         serializer = ForgotPhoneSerializer(data=request.data)
         if serializer.is_valid():
-            phone_number = serializer.validated_data.get(
-                'phone_number').lower()
-            try:
-                user = MyUser.objects.filter(phone_number=phone_number).first()
-                otp = generate_otp()
-                send_otp_via_sms(phone_number, otp)
-                user.otp = otp
-                user.save()
-                return Response({"message": "OTP sent to registered Phone Number", "data": user.username}, status=status.HTTP_200_OK)
-            except:
-                return Response({"errors": "User with this phone number does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-
+            user = serializer.send_phone(serializer.validated_data)
+            return Response({"message": "OTP sent to registered Phone number", "data": user}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):
-    renderer_classes = (UserRenderer,)
+    renderer_classes = [UserRenderer,]
 
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
-
         if serializer.is_valid():
+            
             username = serializer.validated_data.get('username').lower()
-            try:
-                use = MyUser.objects.filter(username=username).first()
-                user = MyUser.objects.get(username=username)
-                if user and user.is_valid:
-                    if user.phone_number:
-                        otp = generate_otp()
-                        send_otp_via_sms(user.phone_number, otp)
-                        user.otp = otp
-                        user.save()
-                    else:
-                        send_otp_via_email(user.email)
-                    phone_number = user.phone_number
-                    email = user.email
-                    return Response({"message": "Login Successful, OTP sent"}, status=status.HTTP_200_OK)
-
-                elif user and not user.is_valid:
-                    return Response({"errors": "User is not verified"}, status=status.HTTP_400_BAD_REQUEST)
-            except:
-                return Response({"errors": "User with this username does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            username = serializer.send_otp(validated_data=serializer.validated_data)
+            return Response({'message': 'OTP sent to registered Email', "data": username}, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

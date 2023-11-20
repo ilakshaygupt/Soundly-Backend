@@ -26,8 +26,11 @@ def send_otp_via_email(email):
 api_key = os.getenv("API_KEY")
 
 
-def send_otp_via_sms(phone_number, otp):
-    print(api_key)
+def send_otp_via_sms(phone_number):
+    otp = random.randint(1000, 9999)
+    user = MyUser.objects.get(phone_number=phone_number)
+    user.otp = otp
+    user.save()
     requests.get(
         f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{otp}/")
 

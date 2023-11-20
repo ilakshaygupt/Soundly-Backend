@@ -83,4 +83,4 @@ class ScoreList(APIView):
         serializer = ScoreSerializer(scores, many=True)
         return Response({"message": serializer.data})
 
-    
+        
