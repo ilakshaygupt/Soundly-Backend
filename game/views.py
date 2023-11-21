@@ -51,6 +51,7 @@ class CheckAnswer(APIView):
     renderer_classes = (UserRenderer,)
     parser_classes = [MultiPartParser, FormParser]
 
+
     def post(self, request, pk):
         try:
             audio_clip = Game.objects.get(pk=pk)
