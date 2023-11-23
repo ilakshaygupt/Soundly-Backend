@@ -2,7 +2,8 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
 from django.db import models
-
+import datetime
+from django.utils import timezone
 
 class MyUserManager(BaseUserManager):
     def create_user(self, username, password=None, email=None, phone_number=None):
@@ -49,6 +50,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_uploader = models.BooleanField(default=False)
     is_valid = models.BooleanField(default=False, null=True, blank=True)
+    opt_created_at = models.DateTimeField(auto_now_add=True, null=True)
     # fav_uploader=models.ManyToManyField('self',blank=True,null=True)
     # fav_languages=models.ManyToManyField(Language,blank=True,null=True)
     # fav_playlist=models.ManyToManyField(Playlist,blank=True,null=True)
@@ -58,6 +60,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    def is_expired(self):
+        return self.opt_created_at + datetime.timedelta(seconds=20) <= timezone.now()
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
