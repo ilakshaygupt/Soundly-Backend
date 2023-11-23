@@ -1,8 +1,10 @@
+from datetime import timedelta
+
 from rest_framework import serializers
 
 from .models import Favourite, Playlist, Song
 
-from datetime import timedelta
+
 class PlaylistSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
                                  'required': 'Please enter a name'})

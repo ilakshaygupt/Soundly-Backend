@@ -1,5 +1,4 @@
-
-
+import os
 import re
 from operator import itemgetter
 
@@ -9,18 +8,20 @@ from django.shortcuts import get_object_or_404
 from fuzzywuzzy import fuzz, process
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
 
 from accounts.renderers import *
 from music.serializers import *
-
 from .models import *
+
 ALLOWED_AUDIO_EXTENSIONS = [".mp3", ".wav", ".acc", ".flac", ".wma", ".aiff", ".pcm", ".m4a"]
 ALLOWED_THUMBNAIL_EXTENSIONS = [".png", ".jpeg", ".jpg", ".webp", ".avif", ".svg"]
-import os
+
+
+
 class SongAPI(APIView):
     serializer_class = SongDisplaySerializer
     renderer_classes = [UserRenderer]
@@ -353,14 +354,6 @@ class SongSearchAPI(APIView):
         songs = Song.objects.filter(is_private=False)
 
         q_objects = Q()
-        weights = {
-            'name': 1,
-            'artist__name': 0.8,
-            'language__name': 0.6,
-            'genre__name': 0.65,
-            'mood__name': 0.6,
-            'uploader__username': 0.7,
-        }
 
         def fuzzy_search(field, query):
             values = Song.objects.values_list(field, flat=True)
@@ -429,8 +422,8 @@ class RecentlyPlayedAPI(APIView):
                 return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
         except RecentlyPlayed.DoesNotExist:
             return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
-        songs = Song.objects.filter(recentlyplayed__in=recently_played).order_by(
-            '-recentlyplayed__timestamp')[:6]
+        song_ids = recently_played.values_list('song__id', flat=True)
+        songs = Song.objects.filter(id__in=song_ids).order_by('-recentlyplayed__timestamp')[:6]
         serializer = SongDisplaySerializer(
             songs, many=True, context={'user': request.user})
         return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
@@ -485,7 +478,6 @@ class GetFavoriteartistAPI(APIView):
 
     def get(self, request):
         user = request.user
-        # favourite = Favourite.objects.get(user=request.user)
         favourite = get_object_or_404(Favourite, user=user)
         artists = favourite.artist.all()
         serializer = artistSerializer(artists, many=True)
@@ -538,40 +530,6 @@ class GetFavoriteartistAPI(APIView):
                 return Response({"message": "artist is not in your favorites"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class UpdateDurationFromUrl(APIView):
-    renderer_classes = [UserRenderer]
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def patch(self, request):
-        songs = Song.objects.all()
-
-        for song in songs:
-            audio_url = song.song_url
-            duration = self.get_audio_duration_and_format(audio_url)
-            if duration is not None:
-                song.duration = duration
-                song.save()
-        return Response({"message": "Duration updated successfully"}, status=status.HTTP_200_OK)
-
-    def get_audio_duration_and_format(self, audio_url):
-        try:
-            response = requests.get(audio_url)
-            audio_data = response.content
-
-            audio = AudioSegment.from_file(io.BytesIO(audio_data))
-
-            duration_in_seconds = len(audio) / 1000.0
-
-            minutes = int(duration_in_seconds // 60)
-            seconds = int(duration_in_seconds % 60)
-            formatted_duration = f"{minutes:02d}:{seconds:02d}"
-
-            return formatted_duration
-        except Exception as e:
-            print(f"Error getting duration for {audio_url}: {str(e)}")
-            return None
 
 
 class AllArtistsAPI(APIView):  # display all artists
@@ -664,7 +622,7 @@ class GetFavoriteLanguageAPI(APIView):
             try:
                 favourite = Favourite.objects.get(user=user)
             except Favourite.DoesNotExist:
-                return Response({"message": "User does not have a favourite object"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "User does not have a favourite "}, status=status.HTTP_400_BAD_REQUEST)
             
             for language_name in language_names:
                 try:

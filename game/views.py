@@ -1,10 +1,10 @@
-from random import choice
-
-import cloudinary
+from random import choice, sample
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from accounts.renderers import UserRenderer
 from music.models import Song
@@ -12,10 +12,7 @@ from music.models import Song
 from .models import Game, Score
 from .serializers import (CheckAnswerSerializer, GameDisplaySerializer,
                           GameSerializer, ScoreSerializer)
-from random import sample
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
 
 class GameList(APIView):
     authentication_classes = [JWTAuthentication]
@@ -33,7 +30,6 @@ class GameList(APIView):
     def post(self, request):
             random_songs = list(Song.objects.order_by('?')[:4])
 
-            
             shuffled_songs = sample(random_songs, len(random_songs))
 
             options = [{

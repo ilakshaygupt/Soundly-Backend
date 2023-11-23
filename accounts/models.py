@@ -1,9 +1,11 @@
 
+import datetime
+
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin, User)
 from django.db import models
-import datetime
 from django.utils import timezone
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self, username, password=None, email=None, phone_number=None):

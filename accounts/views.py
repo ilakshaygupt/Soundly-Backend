@@ -1,8 +1,4 @@
-import random
-
 import cloudinary
-import requests
-from django.core.exceptions import ValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -99,7 +95,6 @@ class ForgotEmail(APIView):
         if serializer.is_valid():
             email = serializer.validated_data.get('email').lower()
             try:
-                # use = MyUser.objects.filter(email=email).first()
                 user = MyUser.objects.get(email=email)
                 if not user.is_valid:
                     return Response({"errors": "User is not valid"}, status=status.HTTP_400_BAD_REQUEST)
@@ -112,7 +107,6 @@ class ForgotEmail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# below
 class ForgotPhone(APIView):
     renderer_classes = [UserRenderer]
 
@@ -218,7 +212,6 @@ class UserProfie(APIView):
         serializer = UserProfileSerializer(user)
         return Response({'message': 'User Data send', "data": serializer.data}, status=status.HTTP_200_OK)
 
-    # Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxNjA2OTY5LCJpYXQiOjE2OTkwMTQ5NjksImp0aSI6ImIxZGM3YzAyNWY3MjRiMGJiM2ZmZGVlMDg5Yzk2NjdkIiwidXNlcl9pZCI6ImFua2l0In0.1JekBlVms9r2tS8vsy4EQxzCRq80VhuWKaosjysJiwU  ankit
 
 
 class UpdateProfile(APIView):

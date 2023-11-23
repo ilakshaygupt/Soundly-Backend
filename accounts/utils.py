@@ -37,7 +37,3 @@ def generate_otp():
     return otp
 
 
-class CustomError(APIException):
-    def __init__(self, error, code=status.HTTP_400_BAD_REQUEST):
-        self.status_code = code
-        self.detail = {'message': [error]}

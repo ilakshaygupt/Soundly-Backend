@@ -1,7 +1,6 @@
 import io
 
 import requests
-from cloudinary.models import CloudinaryField
 from django.db import models
 from pydub import AudioSegment
 
@@ -86,7 +85,7 @@ class Playlist(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     is_private = models.BooleanField(default=False)
-    songs = models.ManyToManyField(Song, blank=True, default=None, null=True)
+    songs = models.ManyToManyField(Song, blank=True, default=None, )
     
 
     def __str__(self):
@@ -95,13 +94,13 @@ class Playlist(models.Model):
 
 class Favourite(models.Model):
     user = models.ForeignKey(
-        MyUser, on_delete=models.CASCADE, blank=True, default=None, null=True)
-    language = models.ManyToManyField(Language, blank=True, null=True)
+        MyUser, on_delete=models.CASCADE, default=None)
+    language = models.ManyToManyField(Language)
     playlist = models.ManyToManyField(
-        Playlist, blank=True, default=None, null=True)
-    song = models.ManyToManyField(Song, blank=True, default=None, null=True)
+        Playlist,  )
+    song = models.ManyToManyField(Song,  )
     artist = models.ManyToManyField(
-        Artist, blank=True, default=None, null=True)
+        Artist,  )
     def __str__(self):
         return self.user.username
 
