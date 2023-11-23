@@ -178,7 +178,7 @@ class VerifyOtpView(APIView):
                     "error": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
-            if not user.otp:
+            if user.otp is None:
                 return Response({
                     "error": "OTP already used"
                 }, status=status.HTTP_400_BAD_REQUEST)

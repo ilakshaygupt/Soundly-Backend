@@ -50,7 +50,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_uploader = models.BooleanField(default=False)
     is_valid = models.BooleanField(default=False, null=True, blank=True)
-    opt_created_at = models.DateTimeField(auto_now_add=True, null=True)
+    opt_created_at = models.DateTimeField(auto_now=True, null=True)
     # fav_uploader=models.ManyToManyField('self',blank=True,null=True)
     # fav_languages=models.ManyToManyField(Language,blank=True,null=True)
     # fav_playlist=models.ManyToManyField(Playlist,blank=True,null=True)
@@ -61,7 +61,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
     def is_expired(self):
-        return self.opt_created_at + datetime.timedelta(minutes=2) <= timezone.now()
+        return self.opt_created_at + datetime.timedelta(minutes=4) <= timezone.now()
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
