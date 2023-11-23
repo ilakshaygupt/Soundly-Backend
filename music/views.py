@@ -9,21 +9,23 @@ from django.shortcuts import get_object_or_404
 from fuzzywuzzy import fuzz, process
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.renderers import *
 from music.serializers import *
 
 from .models import *
-
-
+ALLOWED_AUDIO_EXTENSIONS = [".mp3", ".wav", ".acc", ".flac", ".wma", ".aiff", ".pcm", ".m4a"]
+ALLOWED_THUMBNAIL_EXTENSIONS = [".png", ".jpeg", ".jpg", ".webp", ".avif", ".svg"]
+import os
 class SongAPI(APIView):
     serializer_class = SongDisplaySerializer
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     parser_classes = [MultiPartParser, FormParser]
 
@@ -38,16 +40,18 @@ class SongAPI(APIView):
             if 'audio' in request.FILES:
                 if request.FILES['audio'].size > 7000000:
                     return Response({'message': 'Audio file size must be less than 7MB'}, status=status.HTTP_400_BAD_REQUEST)
-                if request.FILES['audio'].content_type != 'audio/mpeg':
-                    return Response({'message': 'Audio file type must be mp3'}, status=status.HTTP_400_BAD_REQUEST)
+                _, audio_extension = os.path.splitext(request.FILES['audio'].name)
+                if audio_extension.lower() not in ALLOWED_AUDIO_EXTENSIONS:
+                    return Response({'message': 'Invalid audio file type. Supported types: mp3, wav, acc, flac, wma, aiff, pcm, m4a'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Audio file is required'}, status=status.HTTP_400_BAD_REQUEST)
             thumbnail_url = None
             if 'thumbnail' in request.FILES:
                 if request.FILES['thumbnail'].size > 4000000:
                     return Response({'message': 'Thumbnail file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
-                if request.FILES['thumbnail'].content_type != 'image/png' and request.FILES['thumbnail'].content_type != 'image/jpeg':
-                    return Response({'message': 'Thumbnail file type must be png or jpeg'}, status=status.HTTP_400_BAD_REQUEST)
+                _, thumbnail_extension = os.path.splitext(request.FILES['thumbnail'].name)
+                if thumbnail_extension.lower() not in ALLOWED_THUMBNAIL_EXTENSIONS:
+                    return Response({'message': 'Invalid thumbnail file type. Supported types: png, jpeg, jpg, webp, avif, svg'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -172,6 +176,7 @@ class PlaylistAPI(APIView):
     serializer_class = PlaylistSerializer
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     parser_classes = [MultiPartParser, FormParser]
 
@@ -238,6 +243,7 @@ class PlaylistAPI(APIView):
 class PlaylistSongAPI(APIView):  # display all songs from a playlist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, playlist_id):
         try:
@@ -256,6 +262,7 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, playlist_id, song_id):
         try:
@@ -290,7 +297,7 @@ class AddSongToPlaylistAPI(APIView):
 class AllPublicSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         songs = Song.objects.filter(is_private=False)
         serializer = SongDisplaySerializer(
@@ -301,6 +308,7 @@ class AllPublicSongsAPI(APIView):
 class AllPublicPlaylistsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         playlists = Playlist.objects.filter(is_private=False)
@@ -312,6 +320,7 @@ class AllPublicPlaylistsAPI(APIView):
 class PublicSongsFromPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, playlist_id):
         try:
@@ -333,6 +342,7 @@ class PublicSongsFromPlaylistAPI(APIView):
 class SongSearchAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         query = request.GET.get('query')
@@ -383,6 +393,7 @@ class SongSearchAPI(APIView):
 class GetSong(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, song_id):
         try:
@@ -409,6 +420,7 @@ class GetSong(APIView):
 class RecentlyPlayedAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -427,6 +439,7 @@ class RecentlyPlayedAPI(APIView):
 class FavouriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, song_id):
         favourite = Favourite.objects.get(user=request.user)
@@ -453,6 +466,7 @@ class FavouriteSongsAPI(APIView):
 class GetFavoriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         favourite = Favourite.objects.get(user=request.user)
@@ -467,6 +481,7 @@ class GetFavoriteSongsAPI(APIView):
 class GetFavoriteartistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -527,6 +542,7 @@ class GetFavoriteartistAPI(APIView):
 class UpdateDurationFromUrl(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def patch(self, request):
         songs = Song.objects.all()
@@ -561,6 +577,7 @@ class UpdateDurationFromUrl(APIView):
 class AllArtistsAPI(APIView):  # display all artists
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         artists = Artist.objects.all()
@@ -571,6 +588,7 @@ class AllArtistsAPI(APIView):  # display all artists
 class ArtistAPI(APIView):  # display all songs from an artist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, artist_id):
         try:
@@ -586,6 +604,7 @@ class ArtistAPI(APIView):  # display all songs from an artist
 class ForYouAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -622,6 +641,7 @@ class ForYouAPI(APIView):
 class GetFavoriteLanguageAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
     def get(self, request):
@@ -657,3 +677,21 @@ class GetFavoriteLanguageAPI(APIView):
 
             return Response({"message": "Languages added to favorites"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class MixedFavArtistSongs(APIView):
+    renderer_classes=[UserRenderer]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        try:
+            favourite = Favourite.objects.get(user=request.user)
+            artists = favourite.artist.all()
+            songs = Song.objects.none()
+            for artist in artists:
+                songs |= Song.objects.filter(artist=artist)
+            serializer = SongDisplaySerializer(songs, many=True)
+            return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
+
+        except Favourite.DoesNotExist:
+            return Response({"message": "User does not have a favorite object"}, status=status.HTTP_404_NOT_FOUND)

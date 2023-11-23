@@ -12,9 +12,14 @@ from music.models import Song
 from .models import Game, Score
 from .serializers import (CheckAnswerSerializer, GameDisplaySerializer,
                           GameSerializer, ScoreSerializer)
+from random import sample
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class GameList(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     renderer_classes = (UserRenderer,)
     parser_classes = [MultiPartParser, FormParser]
@@ -26,23 +31,34 @@ class GameList(APIView):
         return Response({"data": serializer.data, "message": "all songs data succesfully sent"})
 
     def post(self, request):
-            random_song = Song.objects.order_by('?').first()
-            random_song_2 = random_song
-            while random_song_2 == random_song:
-                random_song_2 = Song.objects.order_by('?').first()
+            random_songs = list(Song.objects.order_by('?')[:4])
 
-            option1 = random_song.name
-            option2 = random_song_2.name
-            correct_answer = random_song.name
-            audio1_url = random_song.song_url
             
+            shuffled_songs = sample(random_songs, len(random_songs))
+
+            options = [{
+                'name': song.name,
+                'audio_url': song.song_url
+            } for song in shuffled_songs]
+
+            option1 = options[0]['name']
+            option2 = options[1]['name']
+            option3 = options[2]['name']
+            option4 = options[3]['name']
+
+            correct_answer = options[0]['name']  
+            audio1_url = options[0]['audio_url']
+
             game = Game.objects.create(
-                name = "Guess the song",
+                name="Guess the song",
                 audio_1=audio1_url,
                 option1=option1,
                 option2=option2,
+                option3=option3,
+                option4=option4,
                 correct_answer=correct_answer
             )
+
             game_serializer = GameSerializer(game)
             return Response({"message": game_serializer.data }, status=status.HTTP_201_CREATED)
 

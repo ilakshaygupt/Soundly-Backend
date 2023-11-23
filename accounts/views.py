@@ -178,9 +178,13 @@ class VerifyOtpView(APIView):
                     "error": "User does not exist"
                 }, status=status.HTTP_400_BAD_REQUEST)
             user = user[0]
-            if not user.otp:
+            if user.otp is None:
                 return Response({
                     "error": "OTP already used"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            if user.is_expired():
+                return Response({
+                    "error": "OTP expired"
                 }, status=status.HTTP_400_BAD_REQUEST)
             if not user.otp == otp:
                 return Response({

@@ -2,17 +2,28 @@ from rest_framework import serializers
 
 from .models import Favourite, Playlist, Song
 
-
+from datetime import timedelta
 class PlaylistSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
                                  'required': 'Please enter a name'})
     description = serializers.CharField(required=True, error_messages={
                                         'required': 'Please enter a description'})
     thumbnail_url = serializers.URLField(required=False)
-
+    totalduration = serializers.SerializerMethodField()
     class Meta:
         model = Playlist
         fields = '__all__'
+    def get_totalduration(self, obj):
+        total_duration_seconds = 0
+
+        for song in obj.songs.all():
+            minutes, seconds = map(int, song.song_duration.split(':'))
+            duration_seconds = minutes * 60 + seconds
+            total_duration_seconds += duration_seconds
+
+        total_duration = str(timedelta(seconds=total_duration_seconds))
+
+        return total_duration
 
 
 class ChangePlaylistSerializer(serializers.ModelSerializer):
@@ -35,10 +46,21 @@ class PlaylistDisplaySerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.URLField(required=False)
     uploader = serializers.CharField(required=True, error_messages={
                                      'required': 'Please enter an uploader'})
-
+    totalduration = serializers.SerializerMethodField()
     class Meta:
         model = Playlist
-        fields = ['name', 'id', 'description', 'thumbnail_url', 'uploader']
+        fields = ['name', 'id', 'description', 'thumbnail_url', 'uploader','totalduration']
+    def get_totalduration(self, obj):
+        total_duration_seconds = 0
+
+        for song in obj.songs.all():
+            minutes, seconds = map(int, song.song_duration.split(':'))
+            duration_seconds = minutes * 60 + seconds
+            total_duration_seconds += duration_seconds
+
+        total_duration = str(timedelta(seconds=total_duration_seconds))
+
+        return total_duration
 
 
 class SongCreateSerializer(serializers.ModelSerializer):

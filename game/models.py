@@ -9,9 +9,11 @@ class Game(models.Model):
     correct_answer = models.CharField(max_length=100)
     option1 = models.CharField(max_length=100)
     option2 = models.CharField(max_length=100)
+    option3 = models.CharField(max_length=100,default=None,blank=True,null=True)
+    option4 = models.CharField(max_length=100,default=None,blank=True,null=True)
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.correct_answer} - {self.id}"
 
 class Score(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
