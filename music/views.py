@@ -18,8 +18,9 @@ from accounts.renderers import *
 from music.serializers import *
 
 from .models import *
-
-
+ALLOWED_AUDIO_EXTENSIONS = [".mp3", ".wav", ".acc", ".flac", ".wma", ".aiff", ".pcm", ".m4a"]
+ALLOWED_THUMBNAIL_EXTENSIONS = [".png", ".jpeg", ".jpg", ".webp", ".avif", ".svg"]
+import os
 class SongAPI(APIView):
     serializer_class = SongDisplaySerializer
     renderer_classes = [UserRenderer]
@@ -38,16 +39,18 @@ class SongAPI(APIView):
             if 'audio' in request.FILES:
                 if request.FILES['audio'].size > 7000000:
                     return Response({'message': 'Audio file size must be less than 7MB'}, status=status.HTTP_400_BAD_REQUEST)
-                if request.FILES['audio'].content_type != 'audio/mpeg':
-                    return Response({'message': 'Audio file type must be mp3'}, status=status.HTTP_400_BAD_REQUEST)
+                _, audio_extension = os.path.splitext(request.FILES['audio'].name)
+                if audio_extension.lower() not in ALLOWED_AUDIO_EXTENSIONS:
+                    return Response({'message': 'Invalid audio file type. Supported types: mp3, wav, acc, flac, wma, aiff, pcm, m4a'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Audio file is required'}, status=status.HTTP_400_BAD_REQUEST)
             thumbnail_url = None
             if 'thumbnail' in request.FILES:
                 if request.FILES['thumbnail'].size > 4000000:
                     return Response({'message': 'Thumbnail file size must be less than 4MB'}, status=status.HTTP_400_BAD_REQUEST)
-                if request.FILES['thumbnail'].content_type != 'image/png' and request.FILES['thumbnail'].content_type != 'image/jpeg':
-                    return Response({'message': 'Thumbnail file type must be png or jpeg'}, status=status.HTTP_400_BAD_REQUEST)
+                _, thumbnail_extension = os.path.splitext(request.FILES['thumbnail'].name)
+                if thumbnail_extension.lower() not in ALLOWED_THUMBNAIL_EXTENSIONS:
+                    return Response({'message': 'Invalid thumbnail file type. Supported types: png, jpeg, jpg, webp, avif, svg'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Thumbnail is required'}, status=status.HTTP_400_BAD_REQUEST)
 
