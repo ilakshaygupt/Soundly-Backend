@@ -9,10 +9,10 @@ from django.shortcuts import get_object_or_404
 from fuzzywuzzy import fuzz, process
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.renderers import *
 from music.serializers import *
@@ -25,6 +25,7 @@ class SongAPI(APIView):
     serializer_class = SongDisplaySerializer
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     parser_classes = [MultiPartParser, FormParser]
 
@@ -175,6 +176,7 @@ class PlaylistAPI(APIView):
     serializer_class = PlaylistSerializer
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     parser_classes = [MultiPartParser, FormParser]
 
@@ -241,6 +243,7 @@ class PlaylistAPI(APIView):
 class PlaylistSongAPI(APIView):  # display all songs from a playlist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, playlist_id):
         try:
@@ -259,6 +262,7 @@ class PlaylistSongAPI(APIView):  # display all songs from a playlist
 class AddSongToPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, playlist_id, song_id):
         try:
@@ -293,7 +297,7 @@ class AddSongToPlaylistAPI(APIView):
 class AllPublicSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         songs = Song.objects.filter(is_private=False)
         serializer = SongDisplaySerializer(
@@ -304,6 +308,7 @@ class AllPublicSongsAPI(APIView):
 class AllPublicPlaylistsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         playlists = Playlist.objects.filter(is_private=False)
@@ -315,6 +320,7 @@ class AllPublicPlaylistsAPI(APIView):
 class PublicSongsFromPlaylistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, playlist_id):
         try:
@@ -336,6 +342,7 @@ class PublicSongsFromPlaylistAPI(APIView):
 class SongSearchAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         query = request.GET.get('query')
@@ -386,6 +393,7 @@ class SongSearchAPI(APIView):
 class GetSong(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, song_id):
         try:
@@ -412,6 +420,7 @@ class GetSong(APIView):
 class RecentlyPlayedAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -430,6 +439,7 @@ class RecentlyPlayedAPI(APIView):
 class FavouriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, song_id):
         favourite = Favourite.objects.get(user=request.user)
@@ -456,6 +466,7 @@ class FavouriteSongsAPI(APIView):
 class GetFavoriteSongsAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         favourite = Favourite.objects.get(user=request.user)
@@ -470,6 +481,7 @@ class GetFavoriteSongsAPI(APIView):
 class GetFavoriteartistAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -530,6 +542,7 @@ class GetFavoriteartistAPI(APIView):
 class UpdateDurationFromUrl(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def patch(self, request):
         songs = Song.objects.all()
@@ -564,6 +577,7 @@ class UpdateDurationFromUrl(APIView):
 class AllArtistsAPI(APIView):  # display all artists
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         artists = Artist.objects.all()
@@ -574,6 +588,7 @@ class AllArtistsAPI(APIView):  # display all artists
 class ArtistAPI(APIView):  # display all songs from an artist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, artist_id):
         try:
@@ -589,6 +604,7 @@ class ArtistAPI(APIView):  # display all songs from an artist
 class ForYouAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -625,6 +641,7 @@ class ForYouAPI(APIView):
 class GetFavoriteLanguageAPI(APIView):
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
     def get(self, request):
@@ -660,3 +677,21 @@ class GetFavoriteLanguageAPI(APIView):
 
             return Response({"message": "Languages added to favorites"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class MixedFavArtistSongs(APIView):
+    renderer_classes=[UserRenderer]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        try:
+            favourite = Favourite.objects.get(user=request.user)
+            artists = favourite.artist.all()
+            songs = Song.objects.none()
+            for artist in artists:
+                songs |= Song.objects.filter(artist=artist)
+            serializer = SongDisplaySerializer(songs, many=True)
+            return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)
+
+        except Favourite.DoesNotExist:
+            return Response({"message": "User does not have a favorite object"}, status=status.HTTP_404_NOT_FOUND)

@@ -14,7 +14,12 @@ from .serializers import (CheckAnswerSerializer, GameDisplaySerializer,
                           GameSerializer, ScoreSerializer)
 from random import sample
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 class GameList(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     renderer_classes = (UserRenderer,)
     parser_classes = [MultiPartParser, FormParser]

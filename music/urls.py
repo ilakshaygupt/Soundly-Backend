@@ -37,4 +37,5 @@ urlpatterns = [
      path('api/artist/<int:artist_id>/', views.ArtistAPI.as_view(), name='artist-view'),
      path('api/foryou/', views.ForYouAPI.as_view(), name='for-you-view'),
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
+     path('api/mixedfavartistsongs/',views.MixedFavArtistSongs.as_view())
 ]
