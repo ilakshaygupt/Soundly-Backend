@@ -61,7 +61,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
     def is_expired(self):
-        return self.opt_created_at + datetime.timedelta(seconds=20) <= timezone.now()
+        return self.opt_created_at + datetime.timedelta(minutes=2) <= timezone.now()
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
