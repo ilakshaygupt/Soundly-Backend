@@ -184,6 +184,9 @@ class VerifyOtpView(APIView):
                 return Response({
                     "error": "Invalid otp"
                 }, status=status.HTTP_400_BAD_REQUEST)
+            is_login = False
+            if user.is_valid:
+                is_login = True
             user.is_valid = True
             user.otp = None
             user.save()
@@ -198,7 +201,8 @@ class VerifyOtpView(APIView):
                 'data': {
                     "access_token": access_token,
                     "user": user_serializer.data,
-                    "refresh_token": refresh_token}
+                    "refresh_token": refresh_token,
+                    "is_login": is_login}
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
