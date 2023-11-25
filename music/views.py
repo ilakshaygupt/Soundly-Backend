@@ -665,6 +665,9 @@ class CreateLyricsData(APIView):
     def get(self,request):
         songs = Song.objects.all()
         for song in songs:
-            if song.lyrics_url:
-                song.download_lyrics_and_save_json()
+            if song.lyrics_json is None:
+                song_lyrics_json = json.dumps({"message": "No lyrics data"})
+                song.lyrics_json = json.loads(song_lyrics_json)
+                song.save()
+            # song.download_lyrics_and_save_json()
         return Response({"message": "Lyrics data created"}, status=status.HTTP_200_OK)
