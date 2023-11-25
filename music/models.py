@@ -64,25 +64,26 @@ class Song(models.Model):
     def download_lyrics_and_save_json(self):
         if not self.lyrics_url:
             return
-        if self.lyrics_json:
-            return
+        # if self.lyrics_json:
+        #     return
         response = requests.get(self.lyrics_url)
         srt_content = response.text.splitlines()
 
         entries = []
-        start_time = end_time = None
         lyrics_lines = []
+        start_time, end_time = None, None
 
         for line in srt_content:
             timestamp_match = re.match(r'^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})$', line.strip())
             if timestamp_match:
-                start_time, end_time = timestamp_match.groups()
-                if lyrics_lines:
+                if start_time is not None and end_time is not None and lyrics_lines:
                     lyrics_text = ' '.join(lyrics_lines).strip()
                     lyrics_text = re.sub(r'\s*\d+\s*$', '', lyrics_text)
                     entry = {"end": end_time, "start": start_time, "text": lyrics_text}
                     entries.append(entry)
-                    lyrics_lines = []  
+                    lyrics_lines = [] 
+
+                start_time, end_time = timestamp_match.groups()
                 continue
 
             lyrics_lines.append(line.strip())
