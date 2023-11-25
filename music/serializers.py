@@ -130,7 +130,7 @@ class SongSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
     lyrics_url = serializers.URLField(required=False)
     song_duration = serializers.CharField(required=False)
-    lyrics_json = serializers.CharField(required=False)
+    lyrics_json = serializers.JSONField(required=False)
     class Meta:
         model = Song
         fields = ['id', 'name', 'song_url', 'thumbnail_url','is_liked','lyrics_url','song_duration','lyrics_json']

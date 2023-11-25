@@ -53,7 +53,7 @@ class Song(models.Model):
     is_private = models.BooleanField(default=False)
     lyrics_url = models.URLField(blank=True, null=True, default=None)
     song_duration = models.CharField(max_length=10, blank=True, null=True)
-    lyrics_json = models.TextField(blank=True, null=True)
+    lyrics_json = models.JSONField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.song_url:
