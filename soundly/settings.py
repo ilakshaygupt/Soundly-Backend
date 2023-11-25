@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'music.apps.MusicConfig',
     'game.apps.GameConfig',
     'cloudinary_storage',
-    'cloudinary'
+    'cloudinary',
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'soundly.urls'
@@ -102,6 +104,13 @@ REST_FRAMEWORK = {
     )
 }
 MEDIA_URL = '/media/'
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+}
+
+
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -133,6 +142,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+INTERNAL_IPS = ["*"] 
+import socket
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

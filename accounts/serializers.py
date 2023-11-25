@@ -171,6 +171,36 @@ class VerifyAccountSerializer(serializers.Serializer):
                                 'max_length': 'otp should be 4 digits'
                                 })
 
+    def validate_username(self,value):
+        value = value.lower()
+        if not MyUser.objects.filter(username=value).exists():
+            raise ValidationError("User with this Username does not exist")
+        if not MyUser.objects.filter(username=value, is_valid=True).exists():
+            raise ValidationError("User with this Username is not verified")
+        return value
+    def validate_otp(self, value):
+        value = value.lower()
+        if not value:
+            raise ValidationError("OTP already used")
+        if not re.match(r"^[0-9]*$", value):
+            raise ValidationError("otp should be digits")
+        if len(value) != 4:
+            raise ValidationError("otp should be 4 digits")
+        return value
+    def validate(self, data):
+        username = data.get('username')
+        otp = data.get('otp')
+        user = MyUser.objects.filter(username=username).first()
+        if not user.otp:
+            raise ValidationError("OTP already used")
+        if not user.otp == otp:
+            raise ValidationError("Invalid otp")
+        user.is_valid = True
+        user.otp = None
+        user.save()
+        return data
+        
+
 
 class VerifyForgotEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',

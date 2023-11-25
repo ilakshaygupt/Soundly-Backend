@@ -87,29 +87,30 @@ class UserLoginView(APIView):
 
 class VerifyOtpView(APIView):
     renderer_classes = (UserRenderer,)
-
+    
     def post(self, request):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get('username').lower()
-            otp = serializer.validated_data.get('otp').lower()
-            user = MyUser.objects.filter(username=username)
-            if not user.exists():
-                return Response({
-                    "error": "User does not exist"
-                }, status=status.HTTP_400_BAD_REQUEST)
-            user = user[0]
-            if not user.otp:
-                return Response({
-                    "error": "OTP already used"
-                }, status=status.HTTP_400_BAD_REQUEST)
-            if not user.otp == otp:
-                return Response({
-                    "error": "Invalid otp"
-                }, status=status.HTTP_400_BAD_REQUEST)
-            user.is_valid = True
-            user.otp = None
-            user.save()
+            # username = serializer.validated_data.get('username').lower()
+            # otp = serializer.validated_data.get('otp').lower()
+            # user = MyUser.objects.get(username=username)
+            # if not user.exists():
+            #     return Response({
+            #         "error": "User does not exist"
+            #     }, status=status.HTTP_400_BAD_REQUEST)
+            # # user = user[0]
+            # if not user.otp:
+            #     return Response({
+            #         "error": "OTP already used"
+            #     }, status=status.HTTP_400_BAD_REQUEST)
+            # if not user.otp == otp:
+            #     return Response({
+            #         "error": "Invalid otp"
+            #     }, status=status.HTTP_400_BAD_REQUEST)
+            # user.is_valid = True
+            # user.otp = None
+            # user.save()
+            user = MyUser.objects.get(username=serializer.validated_data.get('username').lower())
             if not Favourite.objects.filter(user=user).exists():
                 Favourite.objects.create(user=user)
             refresh = RefreshToken.for_user(user)
