@@ -99,7 +99,7 @@ class SongAPI(APIView):
             except Genre.DoesNotExist:
                 genre = Genre.objects.create(name=genre_name)
 
-            Song.objects.create(
+            song = Song.objects.create(
                 uploader=uploader,
                 thumbnail_url=thumbnail_url,
                 song_url=audio_url,
@@ -110,6 +110,9 @@ class SongAPI(APIView):
                 lyrics_url=lyrics_url,
                 **serializer.validated_data
             )
+            songe =Song.objects.get(id=song.id)
+            songe.download_lyrics_and_save_json()
+            songe.save()
 
             return Response({
                 'message': 'Song uploaded successfully'

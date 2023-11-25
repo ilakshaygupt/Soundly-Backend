@@ -95,10 +95,7 @@ class Song(models.Model):
 
         entries_with_indices = [{"index": i + 1, **entry} for i, entry in enumerate(entries)]
 
-        lyrics_json = json.dumps(entries_with_indices, indent=2)
-
-        self.lyrics_json =''
-        self.lyrics_json = lyrics_json
+        self.lyrics_json = entries_with_indices
         self.save()
 
     def get_audio_duration_from_url(self, audio_url):
