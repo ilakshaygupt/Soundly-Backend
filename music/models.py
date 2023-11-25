@@ -1,4 +1,4 @@
-import io
+import io, json, re
 
 import requests
 from django.db import models
@@ -53,6 +53,7 @@ class Song(models.Model):
     is_private = models.BooleanField(default=False)
     lyrics_url = models.URLField(blank=True, null=True, default=None)
     song_duration = models.CharField(max_length=10, blank=True, null=True)
+    lyrics_json = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.song_url:
@@ -60,6 +61,45 @@ class Song(models.Model):
             self.song_duration = self.convert_seconds_to_minutes(duration)
 
         super().save(*args, **kwargs)
+    def download_lyrics_and_save_json(self):
+        if not self.lyrics_url:
+            return
+        if self.lyrics_json:
+            return
+        response = requests.get(self.lyrics_url)
+        srt_content = response.text.splitlines()
+
+        entries = []
+        start_time = end_time = None
+        lyrics_lines = []
+
+        for line in srt_content:
+            timestamp_match = re.match(r'^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})$', line.strip())
+            if timestamp_match:
+                start_time, end_time = timestamp_match.groups()
+                if lyrics_lines:
+                    lyrics_text = ' '.join(lyrics_lines).strip()
+                    lyrics_text = re.sub(r'\s*\d+\s*$', '', lyrics_text)
+                    entry = {"end": end_time, "start": start_time, "text": lyrics_text}
+                    entries.append(entry)
+                    lyrics_lines = []  
+                continue
+
+            lyrics_lines.append(line.strip())
+
+        if start_time is not None and end_time is not None and lyrics_lines:
+            lyrics_text = ' '.join(lyrics_lines).strip()
+            lyrics_text = re.sub(r'\s*\d+\s*$', '', lyrics_text)
+            entry = {"end": end_time, "start": start_time, "text": lyrics_text}
+            entries.append(entry)
+
+        entries_with_indices = [{"index": i + 1, **entry} for i, entry in enumerate(entries)]
+
+        lyrics_json = json.dumps(entries_with_indices, indent=2)
+
+        self.lyrics_json =''
+        self.lyrics_json = lyrics_json
+        self.save()
 
     def get_audio_duration_from_url(self, audio_url):
         response = requests.get(audio_url)

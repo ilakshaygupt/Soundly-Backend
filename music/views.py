@@ -653,3 +653,15 @@ class MixedFavArtistSongs(APIView):
 
         except Favourite.DoesNotExist:
             return Response({"message": "User does not have a favorite object"}, status=status.HTTP_404_NOT_FOUND)
+        
+class CreateLyricsData(APIView):
+    renderer_classes=[UserRenderer]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        songs = Song.objects.all()
+        for song in songs:
+            if song.lyrics_url:
+                song.download_lyrics_and_save_json()
+        return Response({"message": "Lyrics data created"}, status=status.HTTP_200_OK)
