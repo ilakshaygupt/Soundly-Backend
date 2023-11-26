@@ -65,9 +65,6 @@ class Song(models.Model):
     
     def download_lyrics_and_save_json(self):
         if not self.lyrics_url:
-            song_lyrics_json = json.dumps({"message": "No lyrics data"})
-            self.lyrics_json = json.loads(song_lyrics_json)
-            self.save()
             return
         # if self.lyrics_json:
         #     return
