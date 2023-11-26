@@ -426,7 +426,7 @@ class RecentlyPlayedAPI(APIView):
         except RecentlyPlayed.DoesNotExist:
             return Response({'message': 'No songs found'}, status=status.HTTP_204_NO_CONTENT)
         song_ids = recently_played.values_list('song__id', flat=True)
-        songs = Song.objects.filter(id__in=song_ids).order_by('-recentlyplayed__timestamp')[:6]
+        songs = Song.objects.filter(id__in=song_ids).order_by('-recentlyplayed__timestamp')
         serializer = SongDisplaySerializer(
             songs, many=True, context={'user': request.user})
         return Response({"data": serializer.data, "message": "Songs found"}, status=status.HTTP_200_OK)

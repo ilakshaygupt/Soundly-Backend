@@ -38,4 +38,5 @@ urlpatterns = [
      path('api/favourite/language/', views.GetFavoriteLanguageAPI.as_view()),
      path('api/mixedfavartistsongs/',views.MixedFavArtistSongs.as_view()),
      path('api/createlyricsdata/',views.CreateLyricsData.as_view()),
+     \
 ]
