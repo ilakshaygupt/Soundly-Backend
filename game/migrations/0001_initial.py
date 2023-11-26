@@ -4,22 +4,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('audio_1', models.URLField(blank=True, default=None, null=True)),
-                ('correct_answer', models.CharField(max_length=100)),
-                ('option1', models.CharField(max_length=100)),
-                ('option2', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("audio_1", models.URLField(blank=True, default=None, null=True)),
+                ("correct_answer", models.CharField(max_length=100)),
+                ("option1", models.CharField(max_length=100)),
+                ("option2", models.CharField(max_length=100)),
             ],
         ),
     ]

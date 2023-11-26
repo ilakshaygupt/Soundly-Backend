@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0002_myuser_opt_created_at'),
+        ("accounts", "0002_myuser_opt_created_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='myuser',
-            name='opt_created_at',
+            model_name="myuser",
+            name="opt_created_at",
             field=models.DateTimeField(auto_now=True, null=True),
         ),
     ]

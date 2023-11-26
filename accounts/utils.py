@@ -4,11 +4,6 @@ import random
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.tokens import RefreshToken
-
 from .models import MyUser
 
 
@@ -28,16 +23,9 @@ api_key = os.getenv("API_KEY")
 
 def send_otp_via_sms(phone_number, otp):
     print(api_key)
-    requests.get(
-        f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{otp}/")
+    requests.get(f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{otp}/")
 
 
 def generate_otp():
     otp = random.randint(1000, 9999)
     return otp
-
-
-class CustomError(APIException):
-    def __init__(self, error, code=status.HTTP_400_BAD_REQUEST):
-        self.status_code = code
-        self.detail = {'message': [error]}
