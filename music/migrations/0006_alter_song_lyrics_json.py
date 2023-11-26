@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('music', '0005_alter_song_lyrics_json'),
+        ("music", "0005_alter_song_lyrics_json"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='song',
-            name='lyrics_json',
-            field=models.JSONField(blank=True, default='{"message": "No lyrics found"}', null=True),
+            model_name="song",
+            name="lyrics_json",
+            field=models.JSONField(
+                blank=True, default='{"message": "No lyrics found"}', null=True
+            ),
         ),
     ]

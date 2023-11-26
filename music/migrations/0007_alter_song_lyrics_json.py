@@ -5,15 +5,16 @@ import music.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('music', '0006_alter_song_lyrics_json'),
+        ("music", "0006_alter_song_lyrics_json"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='song',
-            name='lyrics_json',
-            field=models.JSONField(blank=True, default=music.models.default_lyrics, null=True),
+            model_name="song",
+            name="lyrics_json",
+            field=models.JSONField(
+                blank=True, default=music.models.default_lyrics, null=True
+            ),
         ),
     ]

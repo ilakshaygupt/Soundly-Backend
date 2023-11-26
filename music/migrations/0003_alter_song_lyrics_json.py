@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('music', '0002_song_lyrics_json_alter_favourite_artist_and_more'),
+        ("music", "0002_song_lyrics_json_alter_favourite_artist_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='song',
-            name='lyrics_json',
+            model_name="song",
+            name="lyrics_json",
             field=models.JSONField(blank=True, null=True),
         ),
     ]
