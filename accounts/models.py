@@ -1,9 +1,14 @@
-
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin, User)
-from django.db import models
 import datetime
+
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+    User,
+)
+from django.db import models
 from django.utils import timezone
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self, username, password=None, email=None, phone_number=None):
@@ -20,14 +25,11 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self,  username, password=None):
+    def create_superuser(self, username, password=None):
         """
         Creates and saves a superuser with the given  username and password.
         """
-        user = self.create_user(
-            password=password,
-            username=username
-        )
+        user = self.create_user(password=password, username=username)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -35,31 +37,23 @@ class MyUserManager(BaseUserManager):
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, primary_key=True)
-    email = models.EmailField(
-        max_length=255,
-        unique=True,
-        blank=True,
-        null=True
-    )
-    phone_number = models.CharField(
-        max_length=10, blank=True, null=True, unique=True)
+    email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
+    phone_number = models.CharField(max_length=10, blank=True, null=True, unique=True)
     otp = models.CharField(max_length=4, blank=True, null=True)
     profile_pic_url = models.URLField(
-        default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfrScK05sZxTgh7Bg4p_Anm_ZSxxqGHpCFA&usqp=CAU')
+        default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfrScK05sZxTgh7Bg4p_Anm_ZSxxqGHpCFA&usqp=CAU"
+    )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_uploader = models.BooleanField(default=False)
     is_valid = models.BooleanField(default=False, null=True, blank=True)
     opt_created_at = models.DateTimeField(auto_now=True, null=True)
-    # fav_uploader=models.ManyToManyField('self',blank=True,null=True)
-    # fav_languages=models.ManyToManyField(Language,blank=True,null=True)
-    # fav_playlist=models.ManyToManyField(Playlist,blank=True,null=True)
-    # fav_songs=models.ManyToManyField(Song,blank=True,null=True)
     objects = MyUserManager()
     USERNAME_FIELD = "username"
 
     def __str__(self):
         return self.username
+
     def is_expired(self):
         return self.opt_created_at + datetime.timedelta(minutes=4) <= timezone.now()
 

@@ -9,19 +9,28 @@ from .models import MyUser
 
 
 class UserRegistrationEmailSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
-                                                                   'invalid': 'Email format is not valid',
-                                                                   'unique': 'User with this Email already exists'})
-    username = serializers.CharField(error_messages={'blank': 'Username cant be blank',
-                                                     'unique': 'User with this Email already exists'})
+    email = serializers.EmailField(
+        max_length=255,
+        error_messages={
+            "blank": "Email cannot be blank",
+            "invalid": "Email format is not valid",
+            "unique": "User with this Email already exists",
+        },
+    )
+    username = serializers.CharField(
+        error_messages={
+            "blank": "Username cant be blank",
+            "unique": "User with this Email already exists",
+        }
+    )
 
     class Meta:
         model = MyUser
-        fields = ['username', 'email']
+        fields = ["username", "email"]
 
     def create(self, validated_data):
-        username = validated_data.get('username')
-        email = validated_data.get('email')
+        username = validated_data.get("username")
+        email = validated_data.get("email")
         user = MyUser.objects.create_user(
             email=email,
             username=username,
@@ -31,21 +40,29 @@ class UserRegistrationEmailSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(max_length=10, min_length=10, error_messages={
-                                         'blank': 'Phone number cannot be blank',
-                                         'min_length': 'Phone number should be 10 digits',
-                                         'max_length': 'Phone number should be 10 digits'})
-    username = serializers.CharField(error_messages={
-                                     'blank': 'Username cant be blank',
-                                     'unique': 'User with this Email already exists'})
+    phone_number = serializers.CharField(
+        max_length=10,
+        min_length=10,
+        error_messages={
+            "blank": "Phone number cannot be blank",
+            "min_length": "Phone number should be 10 digits",
+            "max_length": "Phone number should be 10 digits",
+        },
+    )
+    username = serializers.CharField(
+        error_messages={
+            "blank": "Username cant be blank",
+            "unique": "User with this Email already exists",
+        }
+    )
 
     class Meta:
         model = MyUser
-        fields = ['username', 'phone_number']
+        fields = ["username", "phone_number"]
 
     def create_phone_user(self, validated_data):
-        username = validated_data.get('username')
-        phone_number = validated_data.get('phone_number')
+        username = validated_data.get("username")
+        phone_number = validated_data.get("phone_number")
         user = MyUser.objects.create_user(
             email=None,
             username=username,
@@ -55,13 +72,18 @@ class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
 
 
 class ForgotEmailSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
-                                                                   'invalid': 'Email format is not valid',
-                                                                   'unique': 'User with this Email already exists'})
+    email = serializers.EmailField(
+        max_length=255,
+        error_messages={
+            "blank": "Email cannot be blank",
+            "invalid": "Email format is not valid",
+            "unique": "User with this Email already exists",
+        },
+    )
 
     class Meta:
         model = MyUser
-        fields = ['email']
+        fields = ["email"]
 
 
 class ForgotPhoneSerializer(serializers.ModelSerializer):
@@ -69,59 +91,95 @@ class ForgotPhoneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ['phone_number']
+        fields = ["phone_number"]
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=255, error_messages={'blank': 'Username cant be blank',
-                                                                     'unique': 'User with this Email already exists'})
+    username = serializers.CharField(
+        max_length=255,
+        error_messages={
+            "blank": "Username cant be blank",
+            "unique": "User with this Email already exists",
+        },
+    )
 
     class Meta:
         model = MyUser
-        fields = ['username']
+        fields = ["username"]
 
 
 class VerifyAccountSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=255, error_messages={'blank': 'Username cant be blank',
-                                                                     'unique': 'User with this Email already exists'})
-    otp = serializers.CharField(max_length=4, error_messages={
-                                'blank': 'otp cannot be blank',
-                                'min_length': 'otp should be 4 digits',
-                                'max_length': 'otp should be 4 digits'
-                                })
+    username = serializers.CharField(
+        max_length=255,
+        error_messages={
+            "blank": "Username cant be blank",
+            "unique": "User with this Email already exists",
+        },
+    )
+    otp = serializers.CharField(
+        max_length=4,
+        error_messages={
+            "blank": "otp cannot be blank",
+            "min_length": "otp should be 4 digits",
+            "max_length": "otp should be 4 digits",
+        },
+    )
 
 
 class VerifyForgotEmailSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
-                                                                   'invalid': 'Email format is not valid',
-                                                                   'unique': 'User with this Email already exists'})
-    otp = serializers.CharField(max_length=4, error_messages={
-                                'blank': 'otp cannot be blank',
-                                'min_length': 'otp should be 4 digits',
-                                'max_length': 'otp should be 4 digits'
-                                })
+    email = serializers.EmailField(
+        max_length=255,
+        error_messages={
+            "blank": "Email cannot be blank",
+            "invalid": "Email format is not valid",
+            "unique": "User with this Email already exists",
+        },
+    )
+    otp = serializers.CharField(
+        max_length=4,
+        error_messages={
+            "blank": "otp cannot be blank",
+            "min_length": "otp should be 4 digits",
+            "max_length": "otp should be 4 digits",
+        },
+    )
 
 
 class VerifyForgotPhoneSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(min_length=10, max_length=10, error_messages={
-                                         'blank': 'Phone number cannot be blank',
-                                         'min_length': 'Phone number should be 10 digits',
-                                         'max_length': 'Phone number should be 10 digits'})
-    otp = serializers.CharField(max_length=4, min_length=4, error_messages={
-                                'blank': 'otp cannot be blank',
-                                'min_length': 'otp should be 4 digits',
-                                'max_length': 'otp should be 4 digits'
-                                })
+    phone_number = serializers.CharField(
+        min_length=10,
+        max_length=10,
+        error_messages={
+            "blank": "Phone number cannot be blank",
+            "min_length": "Phone number should be 10 digits",
+            "max_length": "Phone number should be 10 digits",
+        },
+    )
+    otp = serializers.CharField(
+        max_length=4,
+        min_length=4,
+        error_messages={
+            "blank": "otp cannot be blank",
+            "min_length": "otp should be 4 digits",
+            "max_length": "otp should be 4 digits",
+        },
+    )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['username', 'email', 'phone_number',
-                  'profile_pic_url', 'is_uploader', 'is_valid']
+        fields = [
+            "username",
+            "email",
+            "phone_number",
+            "profile_pic_url",
+            "is_uploader",
+            "is_valid",
+        ]
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['profile_pic_url', 'is_uploader']
+        fields = ["profile_pic_url", "is_uploader"]
