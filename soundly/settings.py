@@ -87,7 +87,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'soundly.wsgi.application'
-
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 10 * 10 # 10 MB
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -144,6 +144,7 @@ USE_TZ = True
 
 INTERNAL_IPS = ["*"] 
 import socket
+
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 

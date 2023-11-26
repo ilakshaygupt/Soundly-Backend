@@ -4,10 +4,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import MyUser
+from music.models import *
 
 from .models import MyUser
-from .utils import send_otp_via_email , send_otp_via_sms
-from music.models import *
+from .utils import send_otp_via_email, send_otp_via_sms
+
+
 class UserRegistrationEmailSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
                                                                    'invalid': 'Email format is not valid',

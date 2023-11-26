@@ -1,7 +1,10 @@
 from rest_framework import serializers
 
-from .models import Favourite, Playlist, Song
-
+from .models import *
+import re
+from rest_framework.response import Response
+from rest_framework import status
+import cloudinary
 
 class PlaylistSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
@@ -56,8 +59,99 @@ class SongCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = '__all__'
-    
+    def create(self, validated_data):
+        # Extracting values from validated_data
+        language_name = validated_data.pop('language_name', None)
+        mood_name = validated_data.pop('mood_name', None)
+        genre_name = validated_data.pop('genre_name', None)
+        artist_name = validated_data.pop('artist_name', None)
 
+        # Extract files from request.FILES
+        audio_file = self.context['request'].FILES.get('audio')
+        thumbnail_file = self.context['request'].FILES.get('thumbnail')
+        lyrics_file = self.context['request'].FILES.get('lyrics')
+
+        # Your file validation and cloudinary upload logic here
+        if audio_file:
+            if audio_file.size > 7000000 or audio_file.content_type != 'audio/mpeg':
+                raise serializers.ValidationError({'message': 'Invalid audio file'})
+        else:
+            raise serializers.ValidationError({'message': 'Audio file is required'})
+
+        if thumbnail_file:
+            if thumbnail_file.size > 4000000 or thumbnail_file.content_type not in ['image/png', 'image/jpeg']:
+                raise serializers.ValidationError({'message': 'Invalid thumbnail file'})
+        else:
+            raise serializers.ValidationError({'message': 'Thumbnail file is required'})
+
+        if lyrics_file:
+            if lyrics_file.size > 4000000 or not re.search(r'\.srt$', lyrics_file.name, re.IGNORECASE):
+                raise serializers.ValidationError({'message': 'Invalid lyrics file'})
+
+        # Cloudinary upload logic
+        audio_response = cloudinary.uploader.upload(audio_file, secure=True, resource_type='video')
+        audio_url = audio_response.get('url')
+
+        thumbnail_response = cloudinary.uploader.upload(thumbnail_file, secure=True)
+        thumbnail_url = thumbnail_response.get('url')
+
+        if lyrics_file:
+            lyrics_response = cloudinary.uploader.upload(lyrics_file, secure=True, resource_type='raw')
+            lyrics_url = lyrics_response.get('url')
+        else:
+            lyrics_url = None
+        # Create or get related objects
+        language, _ = Language.objects.get_or_create(name=language_name)
+        mood, _ = Mood.objects.get_or_create(name=mood_name)
+        genre, _ = Genre.objects.get_or_create(name=genre_name)
+        artist, _ = Artist.objects.get_or_create(name=artist_name)
+
+        # Create the Song instance
+        song = Song.objects.create(
+            uploader=self.context['request'].user,
+            language=language,
+            mood=mood,
+            genre=genre,
+            artist=artist,
+            song_url=audio_url,
+            thumbnail_url=thumbnail_url,
+            lyrics_url=lyrics_url,
+            **validated_data
+        )
+        return song
+
+    def validate_lyrics(self, value):
+        if value and value.size > 4000000:
+            raise serializers.ValidationError('Lyrics file size must be less than 4MB')
+        if value and not re.search(r'\.srt$', value.name, re.IGNORECASE):
+            raise serializers.ValidationError('Lyrics file type must be srt')
+        return value
+    def validate_mood_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("Please enter a valid mood name")
+        if not Mood.objects.filter(name=value).exists():
+            Mood.objects.create(name=value)
+        return value
+    
+    def validate_genre_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("Please enter a valid genre name")
+        if not Genre.objects.filter(name=value).exists():
+            Genre.objects.create(name=value)
+        return value
+    def validate_language_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("Please enter a valid language name")
+        if not Language.objects.filter(name=value).exists():
+            Language.objects.create(name=value)
+        return value
+    def validate_artist_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("Please enter a valid artist name")
+        if not Artist.objects.filter(name=value).exists():
+            Artist.objects.create(name=value)
+        return value
+    
 class SongDisplaySerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
                                  'required': 'Please enter a name'})

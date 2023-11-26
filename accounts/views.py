@@ -3,6 +3,13 @@ import random
 import cloudinary
 import requests
 from django.core.exceptions import ValidationError
+#         serializer = UserRegistrationEmailSerializer(data=request.data)
+#         if serializer.is_valid():
+#             newuser = serializer.create(serializer.validated_data)
+#             send_otp_via_email(newuser.email)
+#             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework import generics
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,13 +28,6 @@ from music.models import Favourite
 
 #     def post(self, request):
 
-#         serializer = UserRegistrationEmailSerializer(data=request.data)
-#         if serializer.is_valid():
-#             newuser = serializer.create(serializer.validated_data)
-#             send_otp_via_email(newuser.email)
-#             return Response({"message": "Registration successful, OTP sent"}, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-from rest_framework import generics
 
 class UserRegistrationEmailView(generics.CreateAPIView):
     serializer_class = UserRegistrationEmailSerializer
