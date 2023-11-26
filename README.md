@@ -19,17 +19,10 @@
 - [📍 Overview](#-overview)
 - [📦 Features](#-features)
 - [📂 repository Structure](#-repository-structure)
-- [⚙️ Modules](#modules)
 - [🚀 Getting Started](#-getting-started)
-    - [🔧 Installation](#-installation)
-    - [🤖 Running Soundly-Backend](#-running-Soundly-Backend)
-    - [🧪 Tests](#-tests)
 - [🛣 Roadmap](#-roadmap)
-- [🤝 Contributing](#-contributing)
-- [👏 Acknowledgments](#-acknowledgments)
 
 ---
-
 
 ## 📍 Overview
 
@@ -40,7 +33,7 @@ It enables users to listen to their favorite songs, create playlists, and explor
 
 ## 📦 Features
 
-## Features
+
 
 ### Authentication
 
@@ -191,9 +184,9 @@ Before you begin, make sure you have the following dependencies installed on you
 
 ---
 
-## 🛣 Project Roadmap
+## 🛣Roadmap Project 
 
-- [X] **Task 1: Implement Razorpay Integration**
+- [ ] **Task 1: Implement Razorpay Integration**
   - Integrate Razorpay for artists to set up payment processing.
   - Allow users to become artists and monetize their creations.
   - Implement payment flows for users subscribing to artist features.
@@ -222,43 +215,3 @@ Before you begin, make sure you have the following dependencies installed on you
   - Address reported bugs and issues.
   - Optimize the performance of the application.
   - Conduct thorough testing to ensure a stable and reliable user experience.
-
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here are several ways you can contribute:
-
-- **[Submit Pull Requests](https://github.com/ilakshaygupt/Soundly-Backend/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
-- **[Report Issues](https://github.com/ilakshaygupt/Soundly-Backend/issues)**: Submit bugs found .
-
-#### *Contributing Guidelines*
-
-<details closed>
-<summary>Click to expand</summary>
-
-1. **Fork the Repository**: Start by forking the project repository to your GitHub account.
-2. **Clone Locally**: Clone the forked repository to your local machine using a Git client.
-   ```sh
-   git clone https://github.com/ilakshaygupt/Soundly-Backend
-   ```
-3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
-   ```sh
-   git checkout -b new-feature-x
-   ```
-4. **Make Your Changes**: Develop and test your changes locally.
-5. **Commit Your Changes**: Commit with a clear and concise message describing your updates.
-   ```sh
-   git commit -m 'Implemented new feature x.'
-   ```
-6. **Push to GitHub**: Push the changes to your forked repository.
-   ```sh
-   git push origin new-feature-x
-   ```
-7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
-
-Once your PR is reviewed and approved, it will be merged into the main branch.
-
-</details>
-
