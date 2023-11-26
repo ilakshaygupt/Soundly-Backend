@@ -29,7 +29,6 @@ class CheckAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['answer']
-
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score

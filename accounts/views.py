@@ -76,9 +76,7 @@ class UserLoginView(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            
             username = serializer.validated_data.get('username').lower()
-            
             username = serializer.send_otp(validated_data=serializer.validated_data)
             return Response({'message': 'OTP sent to registered Email', "data": username}, status=status.HTTP_200_OK)
         
@@ -91,25 +89,6 @@ class VerifyOtpView(APIView):
     def post(self, request):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
-            # username = serializer.validated_data.get('username').lower()
-            # otp = serializer.validated_data.get('otp').lower()
-            # user = MyUser.objects.get(username=username)
-            # if not user.exists():
-            #     return Response({
-            #         "error": "User does not exist"
-            #     }, status=status.HTTP_400_BAD_REQUEST)
-            # # user = user[0]
-            # if not user.otp:
-            #     return Response({
-            #         "error": "OTP already used"
-            #     }, status=status.HTTP_400_BAD_REQUEST)
-            # if not user.otp == otp:
-            #     return Response({
-            #         "error": "Invalid otp"
-            #     }, status=status.HTTP_400_BAD_REQUEST)
-            # user.is_valid = True
-            # user.otp = None
-            # user.save()
             user = MyUser.objects.get(username=serializer.validated_data.get('username').lower())
             if not Favourite.objects.filter(user=user).exists():
                 Favourite.objects.create(user=user)
@@ -132,7 +111,6 @@ class UserProfie(APIView):
 
     def get(self, request):
         user = request.user
-        print(request)
         serializer = UserProfileSerializer(user)
         return Response({'message': 'User Data send', "data": serializer.data}, status=status.HTTP_200_OK)
 
@@ -150,9 +128,7 @@ class UpdateProfile(APIView):
             user = MyUser.objects.get(username=request.user)
         except MyUser.DoesNotExist:
             return Response({'message': 'User not found', 'data': ''}, status=status.HTTP_404_NOT_FOUND)
-
         profile_pic_url = request.user.profile_pic_url
-
         if 'profile' in request.FILES:
             profile = request.FILES['profile']
             audio_response = cloudinary.uploader.upload(profile, secure=True)
@@ -160,14 +136,10 @@ class UpdateProfile(APIView):
 
         serializer = UpdateProfileSerializer(
             user, data=request.data, partial=True)
-
         if serializer.is_valid():
             serializer.save()
-
             user.profile_pic_url = profile_pic_url
-
             user.save()
-
             return Response({'message': 'User Data Updated'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

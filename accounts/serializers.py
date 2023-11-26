@@ -233,6 +233,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False, error_messages={
+
+    })
     class Meta:
         model = MyUser
         fields = ['profile_pic_url', 'is_uploader']
