@@ -56,7 +56,7 @@ class SongCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = '__all__'
-
+    
 
 class SongDisplaySerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, error_messages={
@@ -86,7 +86,7 @@ class SongDisplaySerializer(serializers.ModelSerializer):
     def get_is_liked(self, obj):
         user = self.context.get('user')
         return Favourite.objects.filter(user=user, song=obj).exists()
-
+    
 class ChangeSongSerializer(serializers.ModelSerializer):
     is_private = serializers.BooleanField(required=True, error_messages={
                                           'required': 'Please enter a public status'})

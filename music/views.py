@@ -1,4 +1,4 @@
-
+from rest_framework import generics
 
 import re
 from operator import itemgetter
@@ -358,7 +358,7 @@ class SongSearchAPI(APIView):
                 query, values, scorer=fuzz.ratio, limit=None)
             sorted_matches = sorted(matches, key=itemgetter(1), reverse=True)
             similar_values = [value for value,
-                              score in sorted_matches if score > 61.8]
+                              score in sorted_matches if score > 1.8]
             return Q(**{f'{field}__in': similar_values})
 
         keywords = query.split()
@@ -568,7 +568,7 @@ class AllArtistsAPI(APIView):  # display all artists
         return Response({"data": serializer.data, "message": "artists found"}, status=status.HTTP_200_OK)
 
 
-class ArtistAPI(APIView):  # display all songs from an artist
+class ArtistAPI(generics.ListAPIView):  # display all songs from an artist
     renderer_classes = [UserRenderer]
     authentication_classes = [JWTAuthentication]
 

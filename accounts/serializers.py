@@ -7,7 +7,7 @@ from accounts.models import MyUser
 
 from .models import MyUser
 from .utils import send_otp_via_email , send_otp_via_sms
-
+from music.models import *
 class UserRegistrationEmailSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255, error_messages={'blank': 'Email cannot be blank',
                                                                    'invalid': 'Email format is not valid',
@@ -34,15 +34,15 @@ class UserRegistrationEmailSerializer(serializers.ModelSerializer):
         if MyUser.objects.filter(username=value).exists() and not MyUser.objects.filter(username=value).first().is_valid:
             MyUser.objects.filter(username=value).first().delete()
         return value
-    def create(self, validated_data):
-        username = validated_data.get('username').lower()
-        email = validated_data.get('email').lower()
-        user = MyUser.objects.create_user(
-            email=email,
-            username=username,
-            phone_number=None,
-        )
-        return user
+    # def create(self, validated_data):
+    #     username = validated_data.get('username').lower()
+    #     email = validated_data.get('email').lower()
+    #     user = MyUser.objects.create_user(
+    #         email=email,
+    #         username=username,
+    #         phone_number=None,
+    #     )
+    #     return user
 
 
 class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
@@ -195,6 +195,8 @@ class VerifyAccountSerializer(serializers.Serializer):
             raise ValidationError("OTP already used")
         if not user.otp == otp:
             raise ValidationError("Invalid otp")
+        if not Favourite.objects.filter(user=user).exists():
+                Favourite.objects.create(user=user)   
         user.is_valid = True
         user.otp = None
         user.save()
