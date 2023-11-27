@@ -152,11 +152,11 @@ class SongAPI(APIView):
                 genre=genre,
                 artist=artist,
                 lyrics_url=lyrics_url,
-                lyrics_json=None,
                 **serializer.validated_data,
             )
             songe = Song.objects.get(id=song.id)
-            
+            songe.download_lyrics_and_save_json()
+            songe.save()
 
             return Response(
                 {"message": "Song uploaded successfully"},

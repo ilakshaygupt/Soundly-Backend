@@ -8,10 +8,6 @@ from pydub import AudioSegment
 from accounts.models import MyUser
 
 
-def default_lyrics():
-    return {"message": "No lyrics found"}
-
-
 class Language(models.Model):
     name = models.CharField(max_length=100)
 
@@ -64,7 +60,7 @@ class Song(models.Model):
     is_private = models.BooleanField(default=False)
     lyrics_url = models.URLField(blank=True, null=True, default=None)
     song_duration = models.CharField(max_length=10, blank=True, null=True)
-    lyrics_json = models.JSONField(blank=True, null=True, default=default_lyrics)
+    lyrics_json = models.JSONField(blank=True, null=True, default=None)
 
     def save(self, *args, **kwargs):
         if self.song_url:
