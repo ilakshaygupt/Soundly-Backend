@@ -14,7 +14,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
     )
     thumbnail_url = serializers.URLField(required=False)
     totalduration = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = Playlist
         fields = "__all__"

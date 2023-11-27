@@ -75,7 +75,7 @@ class Song(models.Model):
 
     def download_lyrics_and_save_json(self):
         if not self.lyrics_url:
-            return
+            return None
         response = requests.get(self.lyrics_url)
         srt_content = response.text.splitlines()
 
