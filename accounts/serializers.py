@@ -37,6 +37,19 @@ class UserRegistrationEmailSerializer(serializers.ModelSerializer):
             phone_number=None,
         )
         return user
+    def validate_email(self, value):
+        email = value.strip().lower()
+        parts = email.split()
+        if len(parts) >= 2:
+            raise ValidationError("Email should not contain spaces.")
+        return email
+    def validate_username(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
+    
 
 
 class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
@@ -59,7 +72,18 @@ class UserRegistrationPhoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ["username", "phone_number"]
-
+    def validate_email(self, value):
+        email = value.strip().lower()
+        parts = email.split()
+        if len(parts) >= 2:
+            raise ValidationError("Email should not contain spaces.")
+        return email
+    def validate_phone_number(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
     def create_phone_user(self, validated_data):
         username = validated_data.get("username")
         phone_number = validated_data.get("phone_number")
@@ -85,13 +109,26 @@ class ForgotEmailSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ["email"]
 
-
+    def validate_email(self, value):
+        email = value.strip().lower()
+        parts = email.split()
+        if len(parts) >= 2:
+            raise ValidationError("Email should not contain spaces.")
+        return email
 class ForgotPhoneSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=10)
 
     class Meta:
         model = MyUser
         fields = ["phone_number"]
+    def validate_phone_number(self, value):
+        email = value.strip().lower()
+        parts = email.split()
+        if len(parts) >= 2:
+            raise ValidationError("Email should not contain spaces.")
+        return email
+    
+    
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -106,6 +143,12 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ["username"]
+    def validate_username(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
 
 
 class VerifyAccountSerializer(serializers.Serializer):
@@ -124,6 +167,12 @@ class VerifyAccountSerializer(serializers.Serializer):
             "max_length": "otp should be 4 digits",
         },
     )
+    def validate_username(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
 
 
 class VerifyForgotEmailSerializer(serializers.Serializer):
@@ -143,7 +192,14 @@ class VerifyForgotEmailSerializer(serializers.Serializer):
             "max_length": "otp should be 4 digits",
         },
     )
-
+    def validate_email(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
+    
+    
 
 class VerifyForgotPhoneSerializer(serializers.Serializer):
     phone_number = serializers.CharField(
@@ -164,6 +220,12 @@ class VerifyForgotPhoneSerializer(serializers.Serializer):
             "max_length": "otp should be 4 digits",
         },
     )
+    def validate_phone_number(self,value):
+        username = value.strip().lower()
+        parts = username.split()
+        if len(parts)>=2:
+            raise ValidationError("username should not contain spaces")
+        return username
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
