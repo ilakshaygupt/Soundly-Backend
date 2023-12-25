@@ -19,9 +19,9 @@ class UserRegistrationEmailView(APIView):
     def post(self, request):
         serializer = UserRegistrationEmailSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get("username").lower()
+            username = serializer.validated_data.get("username")
 
-            email = serializer.validated_data.get("email").lower()
+            email = serializer.validated_data.get("email")
 
             try:
                 user = MyUser.objects.get(username=username)
@@ -61,8 +61,8 @@ class UserRegistrationPhoneView(APIView):
     def post(self, request):
         serializer = UserRegistrationPhoneSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get("username").lower()
-            phone_number = serializer.validated_data.get("phone_number").lower()
+            username = serializer.validated_data.get("username")
+            phone_number = serializer.validated_data.get("phone_number")
 
             try:
                 user = MyUser.objects.get(username=username)
@@ -108,7 +108,7 @@ class ForgotEmail(APIView):
     def post(self, request):
         serializer = ForgotEmailSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data.get("email").lower()
+            email = serializer.validated_data.get("email")
             try:
                 user = MyUser.objects.get(email=email)
                 if not user.is_valid:
@@ -137,7 +137,7 @@ class ForgotPhone(APIView):
     def post(self, request):
         serializer = ForgotPhoneSerializer(data=request.data)
         if serializer.is_valid():
-            phone_number = serializer.validated_data.get("phone_number").lower()
+            phone_number = serializer.validated_data.get("phone_number")
             try:
                 user = MyUser.objects.filter(phone_number=phone_number).first()
                 otp = generate_otp()
@@ -167,7 +167,7 @@ class UserLoginView(APIView):
         serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid():
-            username = serializer.validated_data.get("username").lower()
+            username = serializer.validated_data.get("username")
             try:
                 user = MyUser.objects.get(username=username)
                 if user and user.is_valid:
@@ -202,8 +202,8 @@ class VerifyOtpView(APIView):
     def post(self, request):
         serializer = VerifyAccountSerializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get("username").lower()
-            otp = serializer.validated_data.get("otp").lower()
+            username = serializer.validated_data.get("username")
+            otp = serializer.validated_data.get("otp")
             user = MyUser.objects.filter(username=username)
             if not user.exists():
                 return Response(
