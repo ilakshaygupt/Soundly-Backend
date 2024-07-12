@@ -21,9 +21,8 @@
 - [📖 Table of Contents](#-table-of-contents)
 - [📍 Overview](#-overview)
 - [📦 Features](#-features)
-- [📂 repository Structure](#-repository-structure)
 - [🚀 Getting Started](#-getting-started)
-- [🛣 Roadmap](#-roadmap-project)
+- [🖼 Images](#-images)
 
 ---
 
@@ -35,8 +34,6 @@ It enables users to listen to their favorite songs, create playlists, and explor
 ---
 
 ## 📦 Features
-
-
 
 ### Authentication
 
@@ -72,61 +69,12 @@ It enables users to listen to their favorite songs, create playlists, and explor
 - Description and tags
 - Thumbnail upload
 
-
-
 ### Additional Features
 
 - Guess game (Check your Knowledge)
 - Synchronized lyrics (Json Data processed and sent for lyrics Synchronization)
 
-
 ---
-
-
-## 📂 Repository Structure
-
-```sh
-└── Soundly-Backend/
-    ├── accounts/
-    │   ├── admin.py
-    │   ├── apps.py
-    │   ├── models.py
-    │   ├── renderers.py
-    │   ├── serializers.py
-    │   ├── tests.py
-    │   ├── urls.py
-    │   ├── utils.py
-    │   └── views.py
-    ├── game/
-    │   ├── admin.py
-    │   ├── apps.py
-    │   ├── migrations/
-    │   ├── models.py
-    │   ├── serializers.py
-    │   ├── tests.py
-    │   ├── urls.py
-    │   └── views.py
-    ├── music/
-    │   ├── admin.py
-    │   ├── apps.py
-    │   ├── migrations/
-    │   ├── models.py
-    │   ├── serializers.py
-    │   ├── tests.py
-    │   ├── urls.py
-    │   └── views.py
-    ├── soundly/
-    │   ├── asgi.py
-    │   ├── settings.py
-    │   ├── urls.py
-    │   └── wsgi.py
-    ├── staticfiles/
-    ├── images/
-    ├── manage.py
-    ├── requirements.txt
-    ├── db.sqlite3
-
-```
 
 ## 🚀 Getting Started
 
@@ -184,37 +132,22 @@ Before you begin, make sure you have the following dependencies installed on you
 
 3. Open your web browser and navigate to the provided address to view the Django project.
 
-
 ---
 
-## 🛣Roadmap Project 
+## 🖼 Images
 
-- [ ] **Task 1: Implement Razorpay Integration**
-  - Integrate Razorpay for artists to set up payment processing.
-  - Allow users to become artists and monetize their creations.
-  - Implement payment flows for users subscribing to artist features.
+<p align="center">
+  <img width="200" alt="Screenshot 2024-07-12 at 6 30 20 AM" src="https://github.com/user-attachments/assets/7393c918-614a-4877-acfd-6aa2968eccb1">
+  <img src="https://github.com/user-attachments/assets/7332fd13-e7c0-4d6f-9b1f-8bacd6b9d982" alt="Artist" width="200" >
+  <img src="https://github.com/user-attachments/assets/27b15221-b818-44ca-a6a3-6060caf6d90c" alt="player" width="200" >
+  <img src="https://github.com/user-attachments/assets/fef117b7-3fa4-4adc-968e-639784a9328b" alt="Mobile Sign Up" width="200" >
+</p>
 
-- [ ] **Task 2: Implement Google OAuth**
-  - Integrate Google OAuth for a seamless and secure login experience.
-  - Allow users to sign in with their Google accounts.
-  - Enhance user authentication and access control.
+### Desktop Images
 
-- [ ] **Task 3: Group Listening Feature**
-  - Enable users to listen to music together in real-time.
-  - Implement a synchronized playback experience for users in a group.
-  - Allow users to create and join listening sessions.
-
-- [ ] **Task 4: Notifications**
-  - Implement a notification system for user interactions and updates.
-  - Notify users about new releases, artist updates, and playlist changes.
-  - Allow users to customize their notification preferences.
-
-- [ ] **Task 5: Artist Analytics**
-  - Provide artists with analytics on their listenership and engagement.
-  - Implement insights such as play counts, listener demographics, and popular tracks.
-  - Enhance the dashboard for artists to track their performance.
-
-- [ ] **Task 6: Bug Fixes and Optimization**
-  - Address reported bugs and issues.
-  - Optimize the performance of the application.
-  - Conduct thorough testing to ensure a stable and reliable user experience.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bee9b6f6-9daa-47f2-a8c1-c8981d714b2a" alt="Sign Up">
+  <img src="https://github.com/user-attachments/assets/f674a78f-306b-48ee-aeb3-8a4978400245" alt="Music Player" >
+  <img src="https://github.com/user-attachments/assets/26e191dd-9dc7-4234-a844-0f55d26ff694" alt="Search" >
+  <img src="https://github.com/user-attachments/assets/3be47a4c-72ed-469f-8ac0-65c3efa2515a" alt="Home Page" >
+</p>
